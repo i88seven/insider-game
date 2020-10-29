@@ -11,15 +11,21 @@
         maxlength="20"
       />
     </v-card-text>
+    <p>subject is {{ storeSubject }}</p>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" nuxt to="/inspire">決定</v-btn>
+      <v-btn color="primary" @click="setSubject">決定</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-export default {
+import Vue from 'vue';
+import { gameContentStore } from '~/store';
+
+export default Vue.extend({
+  name: 'RoleAction',
+
   components: {},
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
@@ -31,5 +37,15 @@ export default {
       },
     };
   },
-};
+  computed: {
+    storeSubject(): string {
+      return gameContentStore.storeSubject;
+    },
+  },
+  methods: {
+    setSubject(): void {
+      gameContentStore.setSubject(this.subject);
+    },
+  },
+});
 </script>
