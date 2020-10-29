@@ -6,21 +6,11 @@
         <vuetify-logo />
       </div>
       <v-card>
-        <v-card-title class="headline">
-          インサイダーゲーム
-        </v-card-title>
-        <v-card-text>
-          インサイダーゲーム始めるよ
-        </v-card-text>
+        <v-card-title class="headline">インサイダーゲーム</v-card-title>
+        <v-card-text>インサイダーゲーム始めるよ</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/roleAction"
-          >
-            始める
-          </v-btn>
+          <v-btn color="primary" nuxt to="/roleAction">始める</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -28,13 +18,13 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import Logo from '~/components/Logo.vue';
+import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
 export default {
   components: {
     Logo,
-    VuetifyLogo
-  }
-}
+    VuetifyLogo,
+  },
+};
 </script>
