@@ -26,8 +26,8 @@ export default {
     return {
       subject: '',
       rules: {
-        required: (value) => !!value || '入力してください',
-        counter: (value) => value.length <= 20 || '20文字以下にしてください。',
+        required: (value: string) => !!value || '入力してください',
+        counter: (value: string) => value.length <= 20 || '20文字以下にしてください。',
       },
     };
   },
