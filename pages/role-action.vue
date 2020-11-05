@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="headline">あなたはマスターです。</v-card-title>
+    <v-card-title class="headline">あなたは {{ storedMyRole }} です。</v-card-title>
     <v-card-text>
       <v-text-field
         v-model="subject"
@@ -11,7 +11,7 @@
         maxlength="20"
       />
     </v-card-text>
-    <p>subject is {{ storeSubject }}</p>
+    <p>subject is {{ storedSubject }}</p>
     <v-card-actions>
       <v-spacer />
       <v-btn color="primary" @click="setSubject">決定</v-btn>
@@ -22,6 +22,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { gameContentStore } from '~/store';
+import { Role } from '~/store/type';
 
 export default Vue.extend({
   name: 'RoleAction',
@@ -38,9 +39,15 @@ export default Vue.extend({
     };
   },
   computed: {
-    storeSubject(): string {
-      return gameContentStore.storeSubject;
+    storedSubject(): string {
+      return gameContentStore.storedSubject;
     },
+    storedMyRole(): Role | undefined {
+      return gameContentStore.storedMyRole;
+    },
+  },
+  mounted() {
+    gameContentStore.randomSelectRole();
   },
   methods: {
     setSubject(): void {
