@@ -14,6 +14,7 @@ class GameContentModule extends VuexModule {
   myRole: Role | undefined = undefined;
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
+  searchTimeLimit: DateTime | null = null;
 
   @Mutation
   SET_SUBJECT(subject: string): void {
@@ -28,6 +29,11 @@ class GameContentModule extends VuexModule {
   @Mutation
   SET_DISCUSSION_TIME_LIMIT(timeLimit: DateTime | null): void {
     this.discussionTimeLimit = timeLimit;
+  }
+
+  @Mutation
+  SET_SEARCH_TIME_LIMIT(timeLimit: DateTime | null): void {
+    this.searchTimeLimit = timeLimit;
   }
 
   @Action({ rawError: true })
@@ -53,6 +59,17 @@ class GameContentModule extends VuexModule {
     this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }
 
+  @Action({ rawError: true })
+  setSearchTimeLimit(): void {
+    if (!this.discussionTimeLimit) {
+      return;
+    }
+    const diff = this.discussionTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
+    this.SET_SEARCH_TIME_LIMIT(
+      DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }).minus(diff)
+    );
+  }
+
   get storedSubject(): string {
     return this.subject;
   }
@@ -63,6 +80,10 @@ class GameContentModule extends VuexModule {
 
   get storedDiscussionTimeLimit(): DateTime | null {
     return this.discussionTimeLimit;
+  }
+
+  get storedSearchTimeLimit(): DateTime | null {
+    return this.searchTimeLimit;
   }
 }
 

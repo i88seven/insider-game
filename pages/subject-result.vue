@@ -1,13 +1,17 @@
 <template>
   <v-card>
-    <v-card-title class="headline">話し合い</v-card-title>
+    <v-card-title class="headline">正解</v-card-title>
+    <v-card-text>
+      <h3>お題は {{ storedSubject }} でした</h3>
+      <p>インサイダーを探せ!</p>
+    </v-card-text>
     <v-card-text>
       <p>残り</p>
       <h3>{{ timeCount }}</h3>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" @click="correct">正解</v-btn>
+      <v-btn color="primary" @click="goToVote">投票へ</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -18,7 +22,7 @@ import Vue from 'vue';
 import { gameContentStore } from '~/store';
 
 export default Vue.extend({
-  name: 'CountDown',
+  name: 'SubjectResult',
 
   components: {},
   data(): { timeCount: string; intervalId: NodeJS.Timeout | undefined } {
@@ -27,9 +31,14 @@ export default Vue.extend({
       intervalId: undefined,
     };
   },
+  computed: {
+    storedSubject(): string {
+      return gameContentStore.storedSubject;
+    },
+  },
   mounted() {
     this.intervalId = setInterval(() => {
-      const timeLimit = gameContentStore.storedDiscussionTimeLimit;
+      const timeLimit = gameContentStore.storedSearchTimeLimit;
       if (!timeLimit) {
         this.timeCount = '--:--';
         return;
@@ -37,7 +46,7 @@ export default Vue.extend({
       const diff = timeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
       if (diff.seconds < 0) {
         this.stopInterval();
-        this.$router.push('failure-result');
+        // TODO vote 画面に遷移
         return;
       }
       this.timeCount =
@@ -47,9 +56,8 @@ export default Vue.extend({
     }, 1000);
   },
   methods: {
-    correct(): void {
-      gameContentStore.setSearchTimeLimit();
-      this.$router.push('subject-result');
+    goToVote(): void {
+      // TODO vote 画面に遷移
     },
     stopInterval(): void {
       if (this.intervalId !== undefined) {
