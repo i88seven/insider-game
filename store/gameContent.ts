@@ -48,6 +48,7 @@ class GameContentModule extends VuexModule {
     this.SET_MY_ROLE(undefined);
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
+    this.SET_SEARCH_TIME_LIMIT(null);
   }
 
   @Action({ rawError: true })
