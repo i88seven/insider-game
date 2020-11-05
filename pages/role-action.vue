@@ -20,7 +20,6 @@
       <v-spacer />
       <v-btn color="primary" @click="startGame">始める</v-btn>
     </v-card-actions>
-    <p>timeLimit is {{ storedTimeLimit }} です</p>
   </v-card>
 </template>
 
@@ -64,6 +63,7 @@ export default Vue.extend({
     },
     startGame(): void {
       gameContentStore.setTimeLimit();
+      this.$router.push('count-down');
     },
   },
 });

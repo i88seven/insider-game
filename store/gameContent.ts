@@ -43,7 +43,7 @@ class GameContentModule extends VuexModule {
 
   @Action({ rawError: true })
   setTimeLimit(): void {
-    this.SET_TIME_LIMIT(DateTime.local().plus({ minutes: DISCUSSION_TIME_MINUTES }));
+    this.SET_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }
 
   get storedSubject(): string {
