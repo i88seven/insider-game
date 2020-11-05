@@ -24,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import { DateTime } from 'luxon';
 import Vue from 'vue';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
