@@ -44,7 +44,7 @@ export default Vue.extend({
     vote(): void {
       console.log(this.votedPlayerId);
       gameContentStore.vote();
-      // TODO game-result
+      this.$router.push('game-result');
     },
   },
 });
