@@ -50,9 +50,6 @@ export default Vue.extend({
     storedMyRole(): Role | undefined {
       return gameContentStore.storedMyRole;
     },
-    storedTimeLimit(): DateTime | null {
-      return gameContentStore.storedTimeLimit;
-    },
   },
   mounted() {
     gameContentStore.randomSelectRole();
@@ -62,7 +59,7 @@ export default Vue.extend({
       gameContentStore.setSubject(this.subject);
     },
     startGame(): void {
-      gameContentStore.setTimeLimit();
+      gameContentStore.setDiscussionTimeLimit();
       this.$router.push('count-down');
     },
   },

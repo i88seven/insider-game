@@ -29,11 +29,12 @@ export default Vue.extend({
   },
   mounted() {
     this.intervalId = setInterval(() => {
-      if (!gameContentStore.storedTimeLimit) {
+      const timeLimit = gameContentStore.storedDiscussionTimeLimit;
+      if (!timeLimit) {
         this.timeCount = '--:--';
         return;
       }
-      const diff = gameContentStore.storedTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
+      const diff = timeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
       if (diff.seconds < 0) {
         this.stopInterval();
         this.$router.push('failure-result');

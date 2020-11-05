@@ -13,7 +13,7 @@ const DISCUSSION_TIME_MINUTES: number = 5;
 class GameContentModule extends VuexModule {
   myRole: Role | undefined = undefined;
   subject: string = '';
-  timeLimit: DateTime | null = null;
+  discussionTimeLimit: DateTime | null = null;
 
   @Mutation
   SET_SUBJECT(subject: string): void {
@@ -26,15 +26,15 @@ class GameContentModule extends VuexModule {
   }
 
   @Mutation
-  SET_TIME_LIMIT(timeLimit: DateTime | null): void {
-    this.timeLimit = timeLimit;
+  SET_DISCUSSION_TIME_LIMIT(timeLimit: DateTime | null): void {
+    this.discussionTimeLimit = timeLimit;
   }
 
   @Action({ rawError: true })
   init(): void {
     this.SET_MY_ROLE(undefined);
     this.SET_SUBJECT('');
-    this.SET_TIME_LIMIT(null);
+    this.SET_DISCUSSION_TIME_LIMIT(null);
   }
 
   @Action({ rawError: true })
@@ -49,8 +49,8 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  setTimeLimit(): void {
-    this.SET_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
+  setDiscussionTimeLimit(): void {
+    this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }
 
   get storedSubject(): string {
@@ -61,8 +61,8 @@ class GameContentModule extends VuexModule {
     return this.myRole;
   }
 
-  get storedTimeLimit(): DateTime | null {
-    return this.timeLimit;
+  get storedDiscussionTimeLimit(): DateTime | null {
+    return this.discussionTimeLimit;
   }
 }
 
