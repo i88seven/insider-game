@@ -99,6 +99,11 @@ class GameContentModule extends VuexModule {
     );
   }
 
+  @Action({ rawError: true })
+  vote(): void {
+    // TODO
+  }
+
   get storedPlayers(): Player[] {
     return this.players;
   }

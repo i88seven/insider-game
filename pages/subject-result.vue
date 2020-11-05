@@ -46,7 +46,7 @@ export default Vue.extend({
       const diff = timeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
       if (diff.seconds < 0) {
         this.stopInterval();
-        // TODO vote 画面に遷移
+        this.$router.push('vote');
         return;
       }
       this.timeCount =
@@ -57,7 +57,7 @@ export default Vue.extend({
   },
   methods: {
     goToVote(): void {
-      // TODO vote 画面に遷移
+      this.$router.push('vote');
     },
     stopInterval(): void {
       if (this.intervalId !== undefined) {
