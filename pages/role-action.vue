@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="headline">あなたは {{ storedMyRole }} です。</v-card-title>
-    <v-card-text>
+    <v-card-text v-if="storedSubject === ''">
       <v-text-field
         v-model="subject"
         :rules="[rules.required, rules.counter]"
@@ -11,15 +11,21 @@
         maxlength="20"
       />
     </v-card-text>
-    <p>subject is {{ storedSubject }}</p>
-    <v-card-actions>
+    <p v-else>お題は {{ storedSubject }} です</p>
+    <v-card-actions v-if="storedSubject === ''">
       <v-spacer />
       <v-btn color="primary" @click="setSubject">決定</v-btn>
     </v-card-actions>
+    <v-card-actions v-else>
+      <v-spacer />
+      <v-btn color="primary" @click="startGame">始める</v-btn>
+    </v-card-actions>
+    <p>timeLimit is {{ storedTimeLimit }} です</p>
   </v-card>
 </template>
 
 <script lang="ts">
+import { DateTime } from 'luxon';
 import Vue from 'vue';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
@@ -45,6 +51,9 @@ export default Vue.extend({
     storedMyRole(): Role | undefined {
       return gameContentStore.storedMyRole;
     },
+    storedTimeLimit(): DateTime | null {
+      return gameContentStore.storedTimeLimit;
+    },
   },
   mounted() {
     gameContentStore.randomSelectRole();
@@ -52,6 +61,9 @@ export default Vue.extend({
   methods: {
     setSubject(): void {
       gameContentStore.setSubject(this.subject);
+    },
+    startGame(): void {
+      gameContentStore.setTimeLimit();
     },
   },
 });
