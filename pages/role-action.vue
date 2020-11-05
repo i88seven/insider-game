@@ -52,6 +52,7 @@ export default Vue.extend({
     },
   },
   mounted() {
+    gameContentStore.setPlayers(); // TODO
     gameContentStore.randomSelectRole();
   },
   methods: {

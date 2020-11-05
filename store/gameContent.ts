@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
-import { Role } from '~/store/type';
+import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
 
 const ROLE_LIST: Role[] = ['master', 'insider', 'citizen'];
@@ -11,10 +11,16 @@ const DISCUSSION_TIME_MINUTES: number = 5;
   namespaced: true,
 })
 class GameContentModule extends VuexModule {
+  players: Player[] = [];
   myRole: Role | undefined = undefined;
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
+
+  @Mutation
+  SET_PLAYERS(players: Player[]): void {
+    this.players = players;
+  }
 
   @Mutation
   SET_SUBJECT(subject: string): void {
@@ -38,9 +44,31 @@ class GameContentModule extends VuexModule {
 
   @Action({ rawError: true })
   init(): void {
+    this.SET_PLAYERS([]);
     this.SET_MY_ROLE(undefined);
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
+  }
+
+  @Action({ rawError: true })
+  setPlayers(): void {
+    this.SET_PLAYERS([
+      {
+        id: '1',
+        name: 'あああ',
+        role: 'master',
+      },
+      {
+        id: '2',
+        name: 'いいい',
+        role: 'insider',
+      },
+      {
+        id: '3',
+        name: 'ううう',
+        role: 'citizen',
+      },
+    ]);
   }
 
   @Action({ rawError: true })
@@ -68,6 +96,10 @@ class GameContentModule extends VuexModule {
     this.SET_SEARCH_TIME_LIMIT(
       DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }).minus(diff)
     );
+  }
+
+  get storedPlayers(): Player[] {
+    return this.players;
   }
 
   get storedSubject(): string {
