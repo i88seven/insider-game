@@ -21,6 +21,6 @@ module.exports = {
     '@typescript-eslint/indent': ['error', 2],
     'max-len': ['error', { code: 100 }],
     'no-restricted-imports': ['error', { patterns: ['../'] }],
-    'comma-dangle': ['error', 'always-multiline'],
+    'comma-dangle': ['error', 'only-multiline'],
   },
 };
