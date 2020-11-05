@@ -21,13 +21,20 @@ class GameContentModule extends VuexModule {
   }
 
   @Mutation
-  SET_MY_ROLE(myRole: Role): void {
+  SET_MY_ROLE(myRole: Role | undefined): void {
     this.myRole = myRole;
   }
 
   @Mutation
-  SET_TIME_LIMIT(timeLimit: DateTime): void {
+  SET_TIME_LIMIT(timeLimit: DateTime | null): void {
     this.timeLimit = timeLimit;
+  }
+
+  @Action({ rawError: true })
+  init(): void {
+    this.SET_MY_ROLE(undefined);
+    this.SET_SUBJECT('');
+    this.SET_TIME_LIMIT(null);
   }
 
   @Action({ rawError: true })

@@ -35,6 +35,7 @@ export default Vue.extend({
   },
   methods: {
     nextGame(): void {
+      gameContentStore.init();
       this.$router.push('role-action');
     },
   },
