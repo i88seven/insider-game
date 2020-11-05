@@ -36,7 +36,7 @@ export default Vue.extend({
       const diff = gameContentStore.storedTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
       if (diff.seconds < 0) {
         this.stopInterval();
-        // TODO subject-result 画面に遷移
+        this.$router.push('failure-result');
         return;
       }
       this.timeCount =
