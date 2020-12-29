@@ -8,6 +8,7 @@
       <v-card>
         <v-card-title class="headline">インサイダーゲーム</v-card-title>
         <v-card-text>インサイダーゲーム始めるよ</v-card-text>
+        <v-card-text>API: {{ apiUrl }}</v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn color="primary" nuxt to="/role-action">始める</v-btn>
@@ -25,6 +26,11 @@ export default {
   components: {
     Logo,
     VuetifyLogo,
+  },
+  computed: {
+    apiUrl: (): string => {
+      return process.env.API_URL || '';
+    },
   },
 };
 </script>
