@@ -10,7 +10,7 @@
     "lint": "eslint --ext .ts,.js,.vue .",
     "format": "eslint --fix --ext .ts,.js,.vue --ignore-path .gitignore .",
     "test": "jest",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run generate"
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
