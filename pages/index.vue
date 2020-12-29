@@ -37,16 +37,24 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
 import io from 'socket.io-client';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
-export default {
+interface Message {
+  name: string;
+  text: string;
+}
+
+export default Vue.extend({
+  name: 'Main',
+
   components: {
     Logo,
     VuetifyLogo,
   },
-  data(): any {
+  data(): { roomId: string; msg: string; msgs: Message[]; socket: any } {
     return {
       roomId: '1',
       msg: '',
@@ -80,5 +88,5 @@ export default {
       }
     },
   },
-};
+});
 </script>
