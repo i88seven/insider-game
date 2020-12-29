@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import io from 'socket.io-client';
+import { io } from 'socket.io-client';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
@@ -68,7 +68,9 @@ export default Vue.extend({
     },
   },
   mounted(): void {
-    this.socket = io(process.env.API_URL, { transports: ['websocket', 'polling', 'flashsocket'] });
+    this.socket = io(process.env.API_URL || '', {
+      transports: ['websocket', 'polling', 'flashsocket'],
+    });
     this.socket.emit('join', this.roomId);
     this.socket.on('new-msg', (msg: any) => {
       this.msgs.push(msg);
