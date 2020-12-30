@@ -11,11 +11,17 @@ const DISCUSSION_TIME_MINUTES: number = 5;
   namespaced: true,
 })
 class GameContentModule extends VuexModule {
+  roomId: string = '';
   players: Player[] = [];
   myRole: Role | undefined = undefined;
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
+
+  @Mutation
+  SET_ROOM_ID(roomId: string): void {
+    this.roomId = roomId;
+  }
 
   @Mutation
   SET_PLAYERS(players: Player[]): void {
@@ -44,11 +50,17 @@ class GameContentModule extends VuexModule {
 
   @Action({ rawError: true })
   init(): void {
+    this.SET_ROOM_ID('');
     this.SET_PLAYERS([]);
     this.SET_MY_ROLE(undefined);
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
     this.SET_SEARCH_TIME_LIMIT(null);
+  }
+
+  @Action({ rawError: true })
+  setRoomId(roomId: string): void {
+    this.SET_ROOM_ID(roomId);
   }
 
   @Action({ rawError: true })
@@ -102,6 +114,10 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   vote(): void {
     // TODO
+  }
+
+  get storedRoomId(): Player[] {
+    return this.players;
   }
 
   get storedPlayers(): Player[] {

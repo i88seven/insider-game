@@ -39,6 +39,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { io } from 'socket.io-client';
+import { gameContentStore } from '~/store';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
@@ -54,9 +55,8 @@ export default Vue.extend({
     Logo,
     VuetifyLogo,
   },
-  data(): { roomId: string; msg: string; msgs: Message[]; socket: any } {
+  data(): { msg: string; msgs: Message[]; socket: any } {
     return {
-      roomId: '1',
       msg: '',
       msgs: [],
       socket: '',
@@ -65,6 +65,14 @@ export default Vue.extend({
   computed: {
     apiUrl: (): string => {
       return process.env.API_URL || '';
+    },
+    roomId: {
+      get() {
+        return gameContentStore.storedRoomId;
+      },
+      set(val: string) {
+        gameContentStore.setRoomId(val);
+      },
     },
   },
   mounted(): void {
