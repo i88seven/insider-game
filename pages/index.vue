@@ -89,9 +89,12 @@ export default Vue.extend({
     this.socket = io(process.env.API_URL || '', {
       transports: ['websocket', 'polling', 'flashsocket'],
     });
-    this.socket.emit('join', this.roomId);
-    this.socket.on('new-msg', (msg: any) => {
-      this.msgs.push(msg);
+    this.socket.emit('join', this.roomId, profile.userId, profile.displayName);
+    this.socket.on('join-room', (player: any) => {
+      gameContentStore.addPlayer({
+        id: player.userId,
+        name: player.displayName,
+      });
     });
   },
   methods: {
