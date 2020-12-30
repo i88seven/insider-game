@@ -25,6 +25,11 @@ import { gameContentStore } from '~/store';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
+const MOCK_PLAYER = {
+  userId: '123456789012345678',
+  displayName: 'mockPlayer',
+};
+
 export default Vue.extend({
   name: 'Main',
 
@@ -50,7 +55,7 @@ export default Vue.extend({
       await this.liffLogin();
     }
     await liff.init({ liffId: process.env.LIFF_ID || '' });
-    const profile = await liff.getProfile();
+    const profile = this.$route.query.roomId ? MOCK_PLAYER : await liff.getProfile(); // TODO
     gameContentStore.addPlayer({
       id: profile.userId,
       name: profile.displayName,
