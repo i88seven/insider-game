@@ -33,6 +33,8 @@ export default {
 
   env: {
     API_URL: process.env.API_URL || '',
+    LIFF_ID: process.env.LIFF_ID || '',
+    ENV: process.env.ENV || '',
   },
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)

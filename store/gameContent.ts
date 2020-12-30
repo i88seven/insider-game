@@ -12,6 +12,7 @@ const DISCUSSION_TIME_MINUTES: number = 5;
 })
 class GameContentModule extends VuexModule {
   roomId: string = '';
+  myId: string = '';
   players: Player[] = [];
   myRole: Role | undefined = undefined;
   subject: string = '';
@@ -21,6 +22,11 @@ class GameContentModule extends VuexModule {
   @Mutation
   SET_ROOM_ID(roomId: string): void {
     this.roomId = roomId;
+  }
+
+  @Mutation
+  SET_MY_ID(myId: string): void {
+    this.myId = myId;
   }
 
   @Mutation
@@ -51,6 +57,7 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   init(): void {
     this.SET_ROOM_ID('');
+    this.SET_MY_ID('');
     this.SET_PLAYERS([]);
     this.SET_MY_ROLE(undefined);
     this.SET_SUBJECT('');
@@ -61,6 +68,29 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   setRoomId(roomId: string): void {
     this.SET_ROOM_ID(roomId);
+  }
+
+  @Action({ rawError: true })
+  setMyId(myId: string): void {
+    this.SET_MY_ID(myId);
+  }
+
+  @Action({ rawError: true })
+  addPlayer({ id, name }: { id: string; name: string }): void {
+    if (
+      this.players.find((player): boolean => {
+        return id === player.id;
+      })
+    ) {
+      return;
+    }
+    this.SET_PLAYERS([
+      ...this.players,
+      {
+        id,
+        name,
+      },
+    ]);
   }
 
   @Action({ rawError: true })
@@ -116,10 +146,13 @@ class GameContentModule extends VuexModule {
     // TODO
   }
 
-  get storedRoomId(): Player[] {
-    return this.players;
+  get storedRoomId(): string {
+    return this.roomId;
   }
 
+  get storedMyId(): string {
+    return this.myId;
+  }
   get storedPlayers(): Player[] {
     return this.players;
   }

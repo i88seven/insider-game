@@ -39,6 +39,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { io } from 'socket.io-client';
+import liff from '@line/liff';
 import { gameContentStore } from '~/store';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
@@ -75,7 +76,16 @@ export default Vue.extend({
       },
     },
   },
-  mounted(): void {
+  async mounted(): Promise<void> {
+    if (process.env.ENV === 'local') {
+      await this.liffLogin();
+    }
+    await liff.init({ liffId: process.env.LIFF_ID || '' });
+    const profile = await liff.getProfile();
+    gameContentStore.addPlayer({
+      id: profile.userId,
+      name: profile.displayName,
+    });
     this.socket = io(process.env.API_URL || '', {
       transports: ['websocket', 'polling', 'flashsocket'],
     });
@@ -85,6 +95,14 @@ export default Vue.extend({
     });
   },
   methods: {
+    async liffLogin(): Promise<void> {
+      await liff.init({ liffId: process.env.LIFF_ID || '' });
+      const isLoggedIn: boolean = await liff.isLoggedIn();
+      if (isLoggedIn) {
+        return;
+      }
+      await liff.login();
+    },
     sendMessage(): void {
       this.msg = this.msg.trim();
       if (this.msg) {

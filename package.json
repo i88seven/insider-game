@@ -13,6 +13,7 @@
     "heroku-postbuild": "npm run generate"
   },
   "dependencies": {
+    "@line/liff": "^2.6.0",
     "@nuxt/typescript-runtime": "^2.0.0",
     "@types/luxon": "^1.25.0",
     "core-js": "^3.6.5",
