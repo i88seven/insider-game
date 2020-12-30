@@ -32,11 +32,6 @@ export default Vue.extend({
     Logo,
     VuetifyLogo,
   },
-  data(): { socket: any } {
-    return {
-      socket: '',
-    };
-  },
   computed: {
     apiUrl: (): string => {
       return process.env.API_URL || '';
@@ -60,11 +55,12 @@ export default Vue.extend({
       id: profile.userId,
       name: profile.displayName,
     });
-    this.socket = io(process.env.API_URL || '', {
+    const socket = io(process.env.API_URL || '', {
       transports: ['websocket', 'polling', 'flashsocket'],
     });
-    this.socket.emit('join', this.roomId, profile.userId, profile.displayName);
-    this.socket.on('join-room', (player: any) => {
+    gameContentStore.setSocket(socket);
+    socket.emit('join', this.roomId, profile.userId, profile.displayName);
+    socket.on('join-room', (player: any) => {
       gameContentStore.addPlayer({
         id: player.userId,
         name: player.displayName,
