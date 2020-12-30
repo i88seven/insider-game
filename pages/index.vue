@@ -37,19 +37,6 @@ export default Vue.extend({
     Logo,
     VuetifyLogo,
   },
-  computed: {
-    apiUrl: (): string => {
-      return process.env.API_URL || '';
-    },
-    roomId: {
-      get() {
-        return gameContentStore.storedRoomId;
-      },
-      set(val: string) {
-        gameContentStore.setRoomId(val);
-      },
-    },
-  },
   async mounted(): Promise<void> {
     if (process.env.ENV === 'local') {
       await this.liffLogin();
