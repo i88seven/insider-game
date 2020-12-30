@@ -7,8 +7,8 @@ export default {
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: '%s - insider-game',
-    title: 'insider-game',
+    titleTemplate: '%s - インサイダーゲーム',
+    title: 'インサイダーゲーム',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
