@@ -47,17 +47,30 @@ export default Vue.extend({
       id: profile.userId,
       name: profile.displayName,
     });
+    gameContentStore.setMyId(profile.userId);
     const socket = io(process.env.API_URL || '', {
       transports: ['websocket', 'polling', 'flashsocket'],
     });
-    gameContentStore.setSocket(socket);
-    socket.emit('join', this.roomId, profile.userId, profile.displayName);
-    socket.on('join-room', (player: any) => {
-      gameContentStore.addPlayer({
-        id: player.userId,
-        name: player.displayName,
+    const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : profile.userId;
+    gameContentStore.setRoomId(roomId);
+    socket.emit('join-room', roomId, profile.userId, profile.displayName);
+    if (gameContentStore.isHost) {
+      socket.on('join-room', (player: any) => {
+        gameContentStore.addPlayer({
+          id: player.id,
+          name: player.name,
+        });
+        socket.emit(
+          'broadcast-players',
+          gameContentStore.storedRoomId,
+          gameContentStore.storedPlayers
+        );
       });
-    });
+    } else {
+      socket.on('broadcast-players', (players: any) => {
+        gameContentStore.setPlayers(players);
+      });
+    }
   },
   methods: {
     async liffLogin(): Promise<void> {

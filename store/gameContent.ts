@@ -107,24 +107,8 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  setPlayers(): void {
-    this.SET_PLAYERS([
-      {
-        id: '1',
-        name: 'あああ',
-        role: 'master',
-      },
-      {
-        id: '2',
-        name: 'いいい',
-        role: 'insider',
-      },
-      {
-        id: '3',
-        name: 'ううう',
-        role: 'citizen',
-      },
-    ]);
+  setPlayers(players: Player[]): void {
+    this.SET_PLAYERS(players);
   }
 
   @Action({ rawError: true })
@@ -188,6 +172,13 @@ class GameContentModule extends VuexModule {
 
   get storedSearchTimeLimit(): DateTime | null {
     return this.searchTimeLimit;
+  }
+
+  get isHost(): boolean {
+    if (!this.roomId || !this.myId) {
+      return false;
+    }
+    return this.roomId === this.myId;
   }
 }
 
