@@ -80,9 +80,7 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   async initLiff(player?: Player): Promise<void> {
     // TODO ログインできるアカウントがないので、mock で対処
-    if (process.env.ENV === 'local') {
-      await this.liffLogin();
-    }
+    await this.liffLogin();
     await liff.init({ liffId: process.env.LIFF_ID || '' });
     if (player) {
       this.addPlayer(player);
