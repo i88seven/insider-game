@@ -14,7 +14,7 @@
         </template>
       </v-simple-table>
     </v-card-text>
-    <v-card-actions v-if="isHost">
+    <v-card-actions v-if="isHost && players.length > 2">
       <v-spacer />
       <v-btn color="primary" @click="start">始める</v-btn>
     </v-card-actions>
@@ -33,11 +33,6 @@ import {
   onDecideRoles,
 } from '~/utils/socket';
 
-const MOCK_PLAYER = {
-  id: '123456789012345678',
-  name: 'mockPlayer',
-};
-
 export default Vue.extend({
   name: 'Main',
 
@@ -51,7 +46,9 @@ export default Vue.extend({
   },
   async mounted(): Promise<void> {
     gameContentStore.init();
-    const player = this.$route.query.roomId ? MOCK_PLAYER : undefined; // TODO
+    const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
+    const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
+    let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
     await gameContentStore.initLiff(player);
 
     const roomId = this.$route.query.roomId
