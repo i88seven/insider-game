@@ -12,7 +12,7 @@ const DISCUSSION_TIME_MINUTES: number = 5;
   namespaced: true,
 })
 class GameContentModule extends VuexModule {
-  socket?: Socket = undefined;
+  socket: Socket | undefined = undefined;
   roomId: string = '';
   myId: string = '';
   players: Player[] = [];
