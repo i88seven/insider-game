@@ -1,5 +1,4 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
-import { Socket } from 'socket.io-client';
 import liff from '@line/liff';
 import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
@@ -13,7 +12,6 @@ const DISCUSSION_TIME_MINUTES: number = 5;
   namespaced: true,
 })
 class GameContentModule extends VuexModule {
-  socket: Socket | undefined = undefined;
   roomId: string = '';
   myId: string = '';
   players: Player[] = [];
@@ -21,11 +19,6 @@ class GameContentModule extends VuexModule {
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
-
-  @Mutation
-  SET_SOCKET(socket: Socket | undefined): void {
-    this.socket = socket;
-  }
 
   @Mutation
   SET_ROOM_ID(roomId: string): void {
@@ -64,7 +57,6 @@ class GameContentModule extends VuexModule {
 
   @Action({ rawError: true })
   init(): void {
-    this.SET_SOCKET(undefined);
     this.SET_ROOM_ID('');
     this.SET_MY_ID('');
     this.SET_PLAYERS([]);
@@ -102,11 +94,6 @@ class GameContentModule extends VuexModule {
       return;
     }
     await liff.login();
-  }
-
-  @Action({ rawError: true })
-  setSocket(socket: Socket): void {
-    this.SET_SOCKET(socket);
   }
 
   @Action({ rawError: true })
@@ -195,10 +182,6 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   vote(): void {
     // TODO
-  }
-
-  get storedSocket(): Socket | undefined {
-    return this.socket;
   }
 
   get storedRoomId(): string {

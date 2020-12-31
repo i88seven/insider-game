@@ -19,8 +19,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { io } from 'socket.io-client';
 import { gameContentStore } from '~/store';
+import {
+  initSocket,
+  joinRoom,
+  onJoinRoom,
+  onBloadcastPlayers,
+  decideRoles,
+  onDecideRoles,
+} from '~/utils/socket';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
@@ -36,11 +43,6 @@ export default Vue.extend({
     Logo,
     VuetifyLogo,
   },
-  data(): { socket: any } {
-    return {
-      socket: '',
-    };
-  },
   computed: {
     players: () => {
       return gameContentStore.storedPlayers;
@@ -54,33 +56,17 @@ export default Vue.extend({
     const player = this.$route.query.roomId ? MOCK_PLAYER : undefined; // TODO
     await gameContentStore.initLiff(player);
 
-    this.socket = io(process.env.API_URL || '', {
-      transports: ['websocket', 'polling', 'flashsocket'],
-    });
     const roomId = this.$route.query.roomId
       ? this.$route.query.roomId.toString()
       : gameContentStore.myId;
     gameContentStore.setRoomId(roomId);
-    this.socket.emit('join-room', roomId, gameContentStore.myId, gameContentStore.me?.name);
+    initSocket();
+    joinRoom();
     if (gameContentStore.isHost) {
-      this.socket.on('join-room', (player: any) => {
-        gameContentStore.addPlayer({
-          id: player.id,
-          name: player.name,
-        });
-        this.socket.emit(
-          'broadcast-players',
-          gameContentStore.storedRoomId,
-          gameContentStore.storedPlayers
-        );
-      });
+      onJoinRoom();
     } else {
-      this.socket.on('broadcast-players', (players: any) => {
-        gameContentStore.setPlayers(players);
-      });
-      this.socket.on('decide-roles', (roles: any) => {
-        console.log(roles);
-        gameContentStore.setRoles(roles);
+      onBloadcastPlayers();
+      onDecideRoles(() => {
         this.$router.push('role-action');
       });
     }
@@ -88,7 +74,7 @@ export default Vue.extend({
   methods: {
     start(): void {
       gameContentStore.randomSelectRoles();
-      this.socket.emit('decide-roles', gameContentStore.storedRoomId, gameContentStore.storedRoles);
+      decideRoles();
       this.$router.push('role-action');
     },
   },
