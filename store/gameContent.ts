@@ -257,6 +257,12 @@ class GameContentModule extends VuexModule {
     return Object.keys(this.votes).length;
   }
 
+  get insider(): Player | undefined {
+    return this.players.find((player): boolean => {
+      return this.decidedRoles[player.id] === 'insider';
+    });
+  }
+
   get isHost(): boolean {
     if (!this.roomId || !this.myId) {
       return false;

@@ -5,7 +5,17 @@
       <h3>インサイダー勝ち</h3>
     </v-card-text>
     <v-card-text>
-      <p>TODO 投票結果</p>
+      投票結果
+      <v-simple-table>
+        <template #default>
+          <tbody>
+            <tr v-for="voteResult in voteResults" :key="voteResult.id">
+              <td>{{ voteResult.fromName }}</td>
+              <td>{{ voteResult.toName }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
     </v-card-text>
     <v-card-text>
       <h3>インサイダーは {{ insiderName }} でした</h3>
@@ -21,6 +31,11 @@
 import Vue from 'vue';
 import { gameContentStore } from '~/store';
 
+interface VoteResult {
+  fromName: string;
+  toName: string;
+}
+
 export default Vue.extend({
   name: 'GameResult',
 
@@ -29,8 +44,21 @@ export default Vue.extend({
     storedSubject(): string {
       return gameContentStore.storedSubject;
     },
+    voteResults(): VoteResult[] {
+      return gameContentStore.storedPlayers.map(
+        (player): VoteResult => {
+          const toPlayer = gameContentStore.storedPlayers.find((target): boolean => {
+            return target.id === gameContentStore.storedVotes[player.id];
+          });
+          return {
+            fromName: player.name,
+            toName: toPlayer ? toPlayer.name : '',
+          };
+        }
+      );
+    },
     insiderName(): string {
-      return 'あああ'; // TODO
+      return gameContentStore.insider ? gameContentStore.insider.name : '';
     },
   },
   methods: {
