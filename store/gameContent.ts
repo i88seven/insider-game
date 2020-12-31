@@ -3,7 +3,6 @@ import liff from '@line/liff';
 import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
 
-const ROLE_LIST: Role[] = ['master', 'insider', 'citizen'];
 const DISCUSSION_TIME_MINUTES: number = 5;
 
 @Module({
@@ -196,7 +195,9 @@ class GameContentModule extends VuexModule {
       return;
     }
     const diff = this.discussionTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
-    this.SET_SEARCH_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
+    this.SET_SEARCH_TIME_LIMIT(
+      DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }).minus(diff)
+    );
   }
 
   @Action({ rawError: true })
