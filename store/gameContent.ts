@@ -141,6 +141,11 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  setRoles(roles: { [key: string]: Role }): void {
+    this.SET_ROLES(roles);
+  }
+
+  @Action({ rawError: true })
   setDiscussionTimeLimit(): void {
     this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }

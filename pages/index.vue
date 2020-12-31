@@ -8,7 +8,7 @@
       <v-card>
         <v-card-title class="headline">インサイダーゲーム</v-card-title>
         <v-card-text>インサイダーゲーム始めるよ</v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="isHost">
           <v-spacer />
           <v-btn color="primary" @click="start">始める</v-btn>
         </v-card-actions>
@@ -37,6 +37,19 @@ export default Vue.extend({
     Logo,
     VuetifyLogo,
   },
+  data(): { socket: any } {
+    return {
+      socket: '',
+    };
+  },
+  computed: {
+    players: () => {
+      return gameContentStore.storedPlayers;
+    },
+    isHost: () => {
+      return gameContentStore.isHost;
+    },
+  },
   async mounted(): Promise<void> {
     if (process.env.ENV === 'local') {
       await this.liffLogin();
@@ -48,27 +61,32 @@ export default Vue.extend({
       name: profile.displayName,
     });
     gameContentStore.setMyId(profile.userId);
-    const socket = io(process.env.API_URL || '', {
+    this.socket = io(process.env.API_URL || '', {
       transports: ['websocket', 'polling', 'flashsocket'],
     });
     const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : profile.userId;
     gameContentStore.setRoomId(roomId);
-    socket.emit('join-room', roomId, profile.userId, profile.displayName);
+    this.socket.emit('join-room', roomId, profile.userId, profile.displayName);
     if (gameContentStore.isHost) {
-      socket.on('join-room', (player: any) => {
+      this.socket.on('join-room', (player: any) => {
         gameContentStore.addPlayer({
           id: player.id,
           name: player.name,
         });
-        socket.emit(
+        this.socket.emit(
           'broadcast-players',
           gameContentStore.storedRoomId,
           gameContentStore.storedPlayers
         );
       });
     } else {
-      socket.on('broadcast-players', (players: any) => {
+      this.socket.on('broadcast-players', (players: any) => {
         gameContentStore.setPlayers(players);
+      });
+      this.socket.on('decide-roles', (roles: any) => {
+        console.log(roles);
+        gameContentStore.setRoles(roles);
+        this.$router.push('role-action');
       });
     }
   },
@@ -83,6 +101,7 @@ export default Vue.extend({
     },
     start(): void {
       gameContentStore.randomSelectRoles();
+      this.socket.emit('decide-roles', gameContentStore.storedRoomId, gameContentStore.storedRoles);
       this.$router.push('role-action');
     },
   },
