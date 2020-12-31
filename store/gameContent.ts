@@ -164,7 +164,12 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  setDiscussionTimeLimit(): void {
+  setDiscussionTimeLimit(discussionTimeLimit: DateTime): void {
+    this.SET_DISCUSSION_TIME_LIMIT(discussionTimeLimit);
+  }
+
+  @Action({ rawError: true })
+  generateDiscussionTimeLimit(): void {
     this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }
 

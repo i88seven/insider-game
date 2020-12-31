@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { decideSubject, onDecideSubject } from '~/utils/socket';
+import { decideSubject, onDecideSubject, startGame, onStartGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
 
@@ -57,6 +57,11 @@ export default Vue.extend({
     if (this.myRole === 'insider') {
       onDecideSubject();
     }
+    if (this.myRole === 'insider' || this.myRole === 'citizen') {
+      onStartGame(() => {
+        this.$router.push('count-down');
+      });
+    }
   },
   methods: {
     setSubject(): void {
@@ -70,7 +75,8 @@ export default Vue.extend({
       if (this.myRole !== 'master') {
         return;
       }
-      gameContentStore.setDiscussionTimeLimit();
+      gameContentStore.generateDiscussionTimeLimit();
+      startGame();
       this.$router.push('count-down');
     },
   },

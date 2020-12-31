@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { gameContentStore } from '~/store';
 import { Player, Role } from '~/store/type';
+import { DateTime } from 'luxon';
 
 let socket: Socket;
 
@@ -50,9 +51,24 @@ function decideSubject(): void {
   socket.emit('decide-subject', gameContentStore.storedRoomId, gameContentStore.storedSubject);
 }
 
-async function onDecideSubject(): Promise<void> {
+function onDecideSubject(): void {
   socket.on('decide-subject', (subject: string) => {
     gameContentStore.setSubject(subject);
+  });
+}
+
+function startGame(): void {
+  socket.emit(
+    'start-game',
+    gameContentStore.storedRoomId,
+    gameContentStore.storedDiscussionTimeLimit
+  );
+}
+
+async function onStartGame(routeAction: any): Promise<void> {
+  socket.on('start-game', (discussionTimeLimit: string) => {
+    gameContentStore.setDiscussionTimeLimit(DateTime.fromISO(discussionTimeLimit));
+    routeAction();
   });
 }
 
@@ -65,4 +81,6 @@ export {
   onDecideRoles,
   decideSubject,
   onDecideSubject,
+  startGame,
+  onStartGame,
 };
