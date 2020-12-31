@@ -1,7 +1,7 @@
 <template>
   <v-card>
-    <v-card-title class="headline">あなたは {{ storedMyRole }} です。</v-card-title>
-    <v-card-text v-if="storedSubject === ''">
+    <v-card-title class="headline">あなたは {{ myRole }} です。</v-card-title>
+    <v-card-text v-if="myRole === 'master' && storedSubject === ''">
       <v-text-field
         v-model="subject"
         :rules="[rules.required, rules.counter]"
@@ -11,12 +11,14 @@
         maxlength="20"
       />
     </v-card-text>
-    <p v-else>お題は {{ storedSubject }} です</p>
-    <v-card-actions v-if="storedSubject === ''">
+    <p v-if="(myRole === 'master' || myRole === 'insider') && storedSubject">
+      お題は {{ storedSubject }} です
+    </p>
+    <v-card-actions v-if="myRole === 'master' && storedSubject === ''">
       <v-spacer />
       <v-btn color="primary" @click="setSubject">決定</v-btn>
     </v-card-actions>
-    <v-card-actions v-else>
+    <v-card-actions v-if="myRole === 'master' && storedSubject">
       <v-spacer />
       <v-btn color="primary" @click="startGame">始める</v-btn>
     </v-card-actions>
@@ -25,6 +27,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { decideSubject, onDecideSubject } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
 
@@ -46,15 +49,27 @@ export default Vue.extend({
     storedSubject(): string {
       return gameContentStore.storedSubject;
     },
-    storedMyRole(): Role | undefined {
+    myRole(): Role | undefined {
       return gameContentStore.myRole;
     },
   },
+  mounted() {
+    if (this.myRole === 'insider') {
+      onDecideSubject();
+    }
+  },
   methods: {
     setSubject(): void {
+      if (this.myRole !== 'master') {
+        return;
+      }
       gameContentStore.setSubject(this.subject);
+      decideSubject();
     },
     startGame(): void {
+      if (this.myRole !== 'master') {
+        return;
+      }
       gameContentStore.setDiscussionTimeLimit();
       this.$router.push('count-down');
     },

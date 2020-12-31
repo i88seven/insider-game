@@ -40,10 +40,29 @@ function decideRoles(): void {
 }
 
 async function onDecideRoles(routeAction: any): Promise<void> {
-  socket.on('decide-roles', (roles: any) => {
+  socket.on('decide-roles', (roles: { [key: string]: Role }) => {
     gameContentStore.setRoles(roles);
     routeAction();
   });
 }
 
-export { initSocket, joinRoom, onJoinRoom, onBloadcastPlayers, decideRoles, onDecideRoles };
+function decideSubject(): void {
+  socket.emit('decide-subject', gameContentStore.storedRoomId, gameContentStore.storedSubject);
+}
+
+async function onDecideSubject(): Promise<void> {
+  socket.on('decide-subject', (subject: string) => {
+    gameContentStore.setSubject(subject);
+  });
+}
+
+export {
+  initSocket,
+  joinRoom,
+  onJoinRoom,
+  onBloadcastPlayers,
+  decideRoles,
+  onDecideRoles,
+  decideSubject,
+  onDecideSubject,
+};
