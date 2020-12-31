@@ -14,9 +14,9 @@
         </template>
       </v-simple-table>
     </v-card-text>
-    <v-card-actions v-if="isHost && players.length > 2">
+    <v-card-actions v-if="isHost">
       <v-spacer />
-      <v-btn color="primary" @click="start">始める</v-btn>
+      <v-btn :disabled="players.length < 3" color="primary" @click="start">始める</v-btn>
     </v-card-actions>
   </v-card>
 </template>
