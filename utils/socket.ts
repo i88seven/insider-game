@@ -72,6 +72,23 @@ async function onStartGame(routeAction: any): Promise<void> {
   });
 }
 
+function correct(): void {
+  socket.emit(
+    'correct',
+    gameContentStore.storedRoomId,
+    gameContentStore.storedSubject,
+    gameContentStore.storedSearchTimeLimit
+  );
+}
+
+async function onCorrect(routeAction: any): Promise<void> {
+  socket.on('correct', (subject: string, searchTimeLimit: string) => {
+    gameContentStore.setSubject(subject);
+    gameContentStore.setSearchTimeLimit(DateTime.fromISO(searchTimeLimit));
+    routeAction();
+  });
+}
+
 export {
   initSocket,
   joinRoom,
@@ -83,4 +100,6 @@ export {
   onDecideSubject,
   startGame,
   onStartGame,
+  correct,
+  onCorrect,
 };

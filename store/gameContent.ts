@@ -174,7 +174,12 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  setSearchTimeLimit(): void {
+  setSearchTimeLimit(searchTimeLimit: DateTime): void {
+    this.SET_SEARCH_TIME_LIMIT(searchTimeLimit);
+  }
+
+  @Action({ rawError: true })
+  generateSearchTimeLimit(): void {
     if (!this.discussionTimeLimit) {
       return;
     }
