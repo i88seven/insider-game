@@ -66,6 +66,11 @@ class GameContentModule extends VuexModule {
     this.SET_ROOM_ID('');
     this.SET_MY_ID('');
     this.SET_PLAYERS([]);
+    this.initGameContent();
+  }
+
+  @Action({ rawError: true })
+  initGameContent(): void {
     this.SET_ROLES({});
     this.SET_VOTES({});
     this.SET_SUBJECT('');

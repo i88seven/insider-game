@@ -116,6 +116,18 @@ function onVoteResult(routeAction: any): void {
   });
 }
 
+function nextGame(): void {
+  socket.emit('next-game', gameContentStore.storedRoomId, gameContentStore.storedRoles);
+}
+
+async function onNextGame(routeAction: any): Promise<void> {
+  socket.on('next-game', (roles: { [key: string]: Role }) => {
+    gameContentStore.initGameContent();
+    gameContentStore.setRoles(roles);
+    routeAction();
+  });
+}
+
 export {
   initSocket,
   joinRoom,
@@ -133,4 +145,6 @@ export {
   onVote,
   voteResult,
   onVoteResult,
+  nextGame,
+  onNextGame,
 };

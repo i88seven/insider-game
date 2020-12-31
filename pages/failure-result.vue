@@ -10,7 +10,7 @@
     <v-card-text>
       <h3>インサイダーは {{ insiderName }} でした</h3>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="isHost">
       <v-spacer />
       <v-btn color="primary" @click="nextGame">次のゲーム</v-btn>
     </v-card-actions>
@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { nextGame, onNextGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 
 export default Vue.extend({
@@ -30,13 +31,27 @@ export default Vue.extend({
       return gameContentStore.storedSubject;
     },
     insiderName(): string {
-      return 'あああ'; // TODO
+      return gameContentStore.insider ? gameContentStore.insider.name : '';
     },
+    isHost(): boolean {
+      return gameContentStore.isHost;
+    },
+  },
+  mounted() {
+    if (!this.isHost) {
+      onNextGame(() => {
+        this.$router.push('role-action');
+      });
+    }
   },
   methods: {
     nextGame(): void {
-      gameContentStore.init();
-      this.$router.push('role-action');
+      if (this.isHost) {
+        gameContentStore.initGameContent();
+        gameContentStore.randomSelectRoles();
+        nextGame();
+        this.$router.push('role-action');
+      }
     },
   },
 });
