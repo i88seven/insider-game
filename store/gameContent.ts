@@ -1,5 +1,6 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
 import { Socket } from 'socket.io-client';
+import liff from '@line/liff';
 import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
 
@@ -71,6 +72,36 @@ class GameContentModule extends VuexModule {
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
     this.SET_SEARCH_TIME_LIMIT(null);
+  }
+
+  @Action({ rawError: true })
+  async initLiff(player?: Player): Promise<void> {
+    // TODO ログインできるアカウントがないので、mock で対処
+    if (process.env.ENV === 'local') {
+      await this.liffLogin();
+    }
+    await liff.init({ liffId: process.env.LIFF_ID || '' });
+    if (player) {
+      this.addPlayer(player);
+      this.SET_MY_ID(player.id);
+    } else {
+      const profile = await liff.getProfile(); // TODO
+      this.addPlayer({
+        id: profile.userId,
+        name: profile.displayName,
+      });
+      this.SET_MY_ID(profile.userId);
+    }
+  }
+
+  @Action({ rawError: true })
+  private async liffLogin(): Promise<void> {
+    await liff.init({ liffId: process.env.LIFF_ID || '' });
+    const isLoggedIn: boolean = await liff.isLoggedIn();
+    if (isLoggedIn) {
+      return;
+    }
+    await liff.login();
   }
 
   @Action({ rawError: true })
@@ -180,6 +211,12 @@ class GameContentModule extends VuexModule {
 
   get storedPlayers(): Player[] {
     return this.players;
+  }
+
+  get me(): Player | undefined {
+    return this.players.find((player): boolean => {
+      return player.id === this.myId;
+    });
   }
 
   get playerCount(): number {
