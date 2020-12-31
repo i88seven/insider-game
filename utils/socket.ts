@@ -89,6 +89,33 @@ async function onCorrect(routeAction: any): Promise<void> {
   });
 }
 
+function vote(toId: string): void {
+  socket.emit('vote', gameContentStore.storedRoomId, gameContentStore.storedMyId, toId);
+}
+
+function onVote(routeAction: any): void {
+  socket.on('vote', (fromId: string, toId: string) => {
+    gameContentStore.setVote({ fromId, toId });
+    socket.emit('vote-result', gameContentStore.storedRoomId, gameContentStore.votes);
+    if (gameContentStore.votesLength === gameContentStore.players.length) {
+      routeAction();
+    }
+  });
+}
+
+function voteResult(): void {
+  socket.emit('vote-result', gameContentStore.storedRoomId, gameContentStore.votes);
+}
+
+function onVoteResult(routeAction: any): void {
+  socket.on('vote-result', (votes: { [key: string]: string }) => {
+    gameContentStore.setVotes(votes);
+    if (gameContentStore.votesLength === gameContentStore.players.length) {
+      routeAction();
+    }
+  });
+}
+
 export {
   initSocket,
   joinRoom,
@@ -102,4 +129,8 @@ export {
   onStartGame,
   correct,
   onCorrect,
+  vote,
+  onVote,
+  voteResult,
+  onVoteResult,
 };

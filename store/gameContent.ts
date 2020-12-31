@@ -16,6 +16,7 @@ class GameContentModule extends VuexModule {
   myId: string = '';
   players: Player[] = [];
   decidedRoles: { [key: string]: Role } = {};
+  votes: { [key: string]: string } = {};
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
@@ -46,6 +47,11 @@ class GameContentModule extends VuexModule {
   }
 
   @Mutation
+  SET_VOTES(votes: { [key: string]: string }): void {
+    this.votes = votes;
+  }
+
+  @Mutation
   SET_DISCUSSION_TIME_LIMIT(timeLimit: DateTime | null): void {
     this.discussionTimeLimit = timeLimit;
   }
@@ -61,6 +67,7 @@ class GameContentModule extends VuexModule {
     this.SET_MY_ID('');
     this.SET_PLAYERS([]);
     this.SET_ROLES({});
+    this.SET_VOTES({});
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
     this.SET_SEARCH_TIME_LIMIT(null);
@@ -87,7 +94,7 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  private async liffLogin(): Promise<void> {
+  async liffLogin(): Promise<void> {
     await liff.init({ liffId: process.env.LIFF_ID || '' });
     const isLoggedIn: boolean = await liff.isLoggedIn();
     if (isLoggedIn) {
@@ -184,14 +191,20 @@ class GameContentModule extends VuexModule {
       return;
     }
     const diff = this.discussionTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
-    this.SET_SEARCH_TIME_LIMIT(
-      DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }).minus(diff)
-    );
+    this.SET_SEARCH_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
   }
 
   @Action({ rawError: true })
-  vote(): void {
-    // TODO
+  setVote({ fromId, toId }: { fromId: string; toId: string }): void {
+    this.SET_VOTES({
+      ...this.votes,
+      [fromId]: toId,
+    });
+  }
+
+  @Action({ rawError: true })
+  setVotes(votes: { [key: string]: string }): void {
+    this.SET_VOTES(votes);
   }
 
   get storedRoomId(): string {
@@ -234,6 +247,14 @@ class GameContentModule extends VuexModule {
 
   get storedSearchTimeLimit(): DateTime | null {
     return this.searchTimeLimit;
+  }
+
+  get storedVotes(): { [key: string]: string } {
+    return this.votes;
+  }
+
+  get votesLength(): number {
+    return Object.keys(this.votes).length;
   }
 
   get isHost(): boolean {

@@ -41,7 +41,7 @@ export default Vue.extend({
   mounted() {
     if (this.myRole === 'insider' || this.myRole === 'citizen') {
       onCorrect(() => {
-        this.$router.push('subject-result');
+        this.$router.push('vote');
       });
     }
     this.intervalId = setInterval(() => {
@@ -66,7 +66,7 @@ export default Vue.extend({
     correct(): void {
       gameContentStore.generateSearchTimeLimit();
       correct();
-      this.$router.push('subject-result');
+      this.$router.push('vote');
     },
     stopInterval(): void {
       if (this.intervalId !== undefined) {
