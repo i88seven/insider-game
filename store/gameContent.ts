@@ -290,6 +290,12 @@ class GameContentModule extends VuexModule {
     return maxId === this.insider.id;
   }
 
+  get master(): Player | undefined {
+    return this.players.find((player): boolean => {
+      return this.decidedRoles[player.id] === 'master';
+    });
+  }
+
   get insider(): Player | undefined {
     return this.players.find((player): boolean => {
       return this.decidedRoles[player.id] === 'insider';

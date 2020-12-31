@@ -50,7 +50,7 @@ export default Vue.extend({
     },
     playerOptions(): Player[] {
       return gameContentStore.players.filter((player): boolean => {
-        return player.id !== gameContentStore.myId;
+        return player.id !== gameContentStore.myId && player.id !== gameContentStore.master?.id;
       });
     },
     myRole(): Role | undefined {
