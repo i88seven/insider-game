@@ -7,7 +7,19 @@
       </div>
       <v-card>
         <v-card-title class="headline">インサイダーゲーム</v-card-title>
-        <v-card-text>インサイダーゲーム始めるよ</v-card-text>
+        <v-card-text>参加者を待っています。</v-card-text>
+        <v-card-text>
+          参加者
+          <v-simple-table>
+            <template #default>
+              <tbody>
+                <tr v-for="player in players" :key="player.id">
+                  <td>{{ player.name }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card-text>
         <v-card-actions v-if="isHost">
           <v-spacer />
           <v-btn color="primary" @click="start">始める</v-btn>
