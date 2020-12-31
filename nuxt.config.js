@@ -43,14 +43,20 @@ export default {
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
 
-  server: {
-    port: 3000,
-    host: '0.0.0.0',
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'localhost-key.pem')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'localhost.pem')),
-    },
-  },
+  /* eslint-disable indent */
+  /* eslint-disable @typescript-eslint/indent */
+  server:
+    process.env.ENV === 'local'
+      ? {
+          port: 3000,
+          host: '0.0.0.0',
+          https: {
+            key: fs.readFileSync(path.resolve(__dirname, 'localhost-key.pem')),
+            cert: fs.readFileSync(path.resolve(__dirname, 'localhost.pem')),
+          },
+        }
+      : {},
+  /* eslint-enable */
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
