@@ -16,7 +16,7 @@ class GameContentModule extends VuexModule {
   roomId: string = '';
   myId: string = '';
   players: Player[] = [];
-  myRole: Role | undefined = undefined;
+  decidedRoles: { [key: string]: Role } = {};
   subject: string = '';
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
@@ -47,8 +47,8 @@ class GameContentModule extends VuexModule {
   }
 
   @Mutation
-  SET_MY_ROLE(myRole: Role | undefined): void {
-    this.myRole = myRole;
+  SET_ROLES(decidedRoles: { [key: string]: Role }): void {
+    this.decidedRoles = decidedRoles;
   }
 
   @Mutation
@@ -67,7 +67,7 @@ class GameContentModule extends VuexModule {
     this.SET_ROOM_ID('');
     this.SET_MY_ID('');
     this.SET_PLAYERS([]);
-    this.SET_MY_ROLE(undefined);
+    this.SET_ROLES({});
     this.SET_SUBJECT('');
     this.SET_DISCUSSION_TIME_LIMIT(null);
     this.SET_SEARCH_TIME_LIMIT(null);
@@ -117,9 +117,27 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  randomSelectRole(): void {
-    const randomIndex = Math.floor(Math.random() * ROLE_LIST.length);
-    this.SET_MY_ROLE(ROLE_LIST[randomIndex]);
+  randomSelectRoles(): void {
+    const indexOfMaster = Math.floor(Math.random() * this.playerCount);
+    let indexOfInsider = Math.floor(Math.random() * (this.playerCount - 1));
+    if (indexOfMaster === indexOfInsider) {
+      indexOfInsider = this.playerCount - 1;
+    }
+    const roles: { [key: string]: Role } = {};
+    this.players.forEach((player, index): void => {
+      switch (index) {
+        case indexOfMaster:
+          roles[player.id] = 'master';
+          break;
+        case indexOfInsider:
+          roles[player.id] = 'insider';
+          break;
+        default:
+          roles[player.id] = 'citizen';
+          break;
+      }
+    });
+    this.SET_ROLES(roles);
   }
 
   @Action({ rawError: true })
@@ -154,16 +172,25 @@ class GameContentModule extends VuexModule {
   get storedMyId(): string {
     return this.myId;
   }
+
   get storedPlayers(): Player[] {
     return this.players;
+  }
+
+  get playerCount(): number {
+    return this.players.length;
   }
 
   get storedSubject(): string {
     return this.subject;
   }
 
-  get storedMyRole(): Role | undefined {
-    return this.myRole;
+  get storedRoles(): { [key: string]: Role } {
+    return this.decidedRoles;
+  }
+
+  get myRole(): Role | undefined {
+    return this.decidedRoles[this.myId];
   }
 
   get storedDiscussionTimeLimit(): DateTime | null {

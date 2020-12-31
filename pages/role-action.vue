@@ -47,12 +47,8 @@ export default Vue.extend({
       return gameContentStore.storedSubject;
     },
     storedMyRole(): Role | undefined {
-      return gameContentStore.storedMyRole;
+      return gameContentStore.myRole;
     },
-  },
-  mounted() {
-    gameContentStore.setPlayers(); // TODO
-    gameContentStore.randomSelectRole();
   },
   methods: {
     setSubject(): void {

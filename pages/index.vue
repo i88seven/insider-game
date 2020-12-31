@@ -10,7 +10,7 @@
         <v-card-text>インサイダーゲーム始めるよ</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" nuxt to="/role-action">始める</v-btn>
+          <v-btn color="primary" @click="start">始める</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -80,6 +80,10 @@ export default Vue.extend({
         return;
       }
       await liff.login();
+    },
+    start(): void {
+      gameContentStore.randomSelectRoles();
+      this.$router.push('role-action');
     },
   },
 });
