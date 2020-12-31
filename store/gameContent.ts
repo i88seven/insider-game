@@ -263,6 +263,33 @@ class GameContentModule extends VuexModule {
     return Object.keys(this.votes).length;
   }
 
+  get isInsiderLose(): boolean {
+    if (!this.insider) {
+      return true;
+    }
+    const voteCountMap: { [key: string]: number } = {};
+    this.players.forEach((player): void => {
+      voteCountMap[player.id] = 0;
+    });
+    Object.values(this.votes).forEach((votedId): void => {
+      voteCountMap[votedId] += 1;
+    });
+    let maxId = '';
+    let maxCount = 0;
+    let isSame = false;
+    Object.entries(voteCountMap).forEach(([id, count]): void => {
+      if (count >= maxCount) {
+        isSame = count === maxCount;
+        maxId = id;
+        maxCount = count;
+      }
+    });
+    if (isSame) {
+      return false;
+    }
+    return maxId === this.insider.id;
+  }
+
   get insider(): Player | undefined {
     return this.players.find((player): boolean => {
       return this.decidedRoles[player.id] === 'insider';

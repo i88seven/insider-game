@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
-      <h3>インサイダー勝ち</h3>
+      <h3>インサイダー {{ insiderResultText }}</h3>
     </v-card-text>
     <v-card-text>
       投票結果
@@ -63,6 +63,9 @@ export default Vue.extend({
     },
     isHost(): boolean {
       return gameContentStore.isHost;
+    },
+    insiderResultText(): string {
+      return gameContentStore.isInsiderLose ? '負け' : '勝ち';
     },
   },
   mounted() {
