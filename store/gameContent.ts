@@ -108,6 +108,18 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async share(url: string): Promise<boolean> {
+    const message = 'インサイダーゲームに招待されています！ \n' + `${url}?roomId=${this.roomId}`;
+    await liff.shareTargetPicker([
+      {
+        type: 'text',
+        text: message,
+      },
+    ]);
+    return true;
+  }
+
+  @Action({ rawError: true })
   setRoomId(roomId: string): void {
     this.SET_ROOM_ID(roomId);
   }

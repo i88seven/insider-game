@@ -15,6 +15,7 @@
       </v-simple-table>
     </v-card-text>
     <v-card-actions v-if="isHost">
+      <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
       <v-spacer />
       <v-btn :disabled="players.length < 3" color="primary" @click="start">始める</v-btn>
     </v-card-actions>
@@ -67,6 +68,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    async share(): Promise<void> {
+      await gameContentStore.share(window.location.origin);
+    },
     start(): void {
       gameContentStore.randomSelectRoles();
       decideRoles();
