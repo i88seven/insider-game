@@ -64,6 +64,7 @@ export default Vue.extend({
   },
   methods: {
     correct(): void {
+      this.stopInterval();
       gameContentStore.generateSearchTimeLimit();
       correct();
       this.$router.push('vote');
