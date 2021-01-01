@@ -25,12 +25,15 @@ export default Vue.extend({
     this.debugMsg = 'after init store';
     const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
     this.debugMsg = `roomId: ${roomId}, liffId: ${process.env.LIFF_ID}`;
-    try {
-      await liff.init({ liffId: process.env.LIFF_ID || '' });
-    } catch (e) {
-      this.debugMsg = e;
-    }
-    this.debugMsg = `after init liff`;
+    liff
+      .init({ liffId: process.env.LIFF_ID || '' })
+      .then(() => {
+        this.debugMsg = `after init liff`;
+      })
+      .catch((err) => {
+        this.debugMsg = err;
+        return;
+      });
     if (!liff.isLoggedIn()) {
       this.debugMsg = `is logged in`;
       await gameContentStore.loginLiff();
