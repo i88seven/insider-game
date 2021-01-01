@@ -13,24 +13,38 @@ import { gameContentStore } from '~/store';
 export default Vue.extend({
   name: 'Root',
 
-  async mounted(): Promise<void> {
+  mounted(): void {
     gameContentStore.init();
-    const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
-    liff
-      .init({ liffId: process.env.LIFF_ID || '' })
-      .then(() => {
-        if (!liff.isInClient() && !liff.isLoggedIn()) {
-          liff.login({ redirectUri: location.href });
+    setTimeout(() => {
+      this.liffInit();
+    }, 0);
+  },
+  methods: {
+    liffInit(): void {
+      const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
+      liff.init(
+        { liffId: process.env.LIFF_ID || '' },
+        () => {
+          if (liff.isInClient()) {
+            return;
+          }
+          if (!liff.isLoggedIn()) {
+            const locationPath = location.origin + '/main';
+            const redirectUri = roomId ? locationPath + `?roomId=${roomId}` : locationPath;
+            liff.login({ redirectUri });
+            return;
+          }
+          if (roomId) {
+            this.$router.push({ path: 'main', query: { roomId } });
+          } else {
+            this.$router.push('main');
+          }
+        },
+        (error) => {
+          console.log(error.message);
         }
-      })
-      .catch((err) => {
-        console.log('LIFF Initialization failed.', err);
-      });
-    if (roomId) {
-      this.$router.push({ path: 'main', query: { roomId } });
-    } else {
-      this.$router.push('main');
-    }
+      );
+    },
   },
 });
 </script>

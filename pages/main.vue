@@ -14,7 +14,7 @@
         </template>
       </v-simple-table>
     </v-card-text>
-    <v-btn v-if="isLoggedIn" @click="logout">ログアウト</v-btn>
+    <v-btn @click="logout">ログアウト</v-btn>
     <v-card-actions v-if="isHost">
       <v-spacer />
       <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
@@ -46,41 +46,43 @@ export default Vue.extend({
     isHost: () => {
       return gameContentStore.isHost;
     },
-    isLoggedIn: () => {
-      return liff.isLoggedIn();
-    },
   },
   async mounted(): Promise<void> {
     gameContentStore.init();
-    const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
-    const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
-    const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
-    if (!liff.isInClient()) {
-      gameContentStore.initLiff();
-    } else if (!liff.isLoggedIn()) {
-      gameContentStore.loginLiff();
-    }
-    let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
-    if (player) {
-      gameContentStore.addPlayer(player);
-      gameContentStore.setMyId(player.id);
-    } else {
-      await gameContentStore.getProfile();
-    }
-
-    gameContentStore.setRoomId(roomId || gameContentStore.myId);
-    initSocket();
-    joinRoom();
-    if (gameContentStore.isHost) {
-      onJoinRoom();
-    } else {
-      onBloadcastPlayers();
-      onDecideRoles(() => {
-        this.$router.push('role-action');
-      });
-    }
+    setTimeout(() => {
+      this.liffInit();
+    }, 0);
   },
   methods: {
+    async liffInit(): Promise<void> {
+      const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
+      const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
+      const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
+      liff
+        .init({ liffId: process.env.LIFF_ID || '' })
+        .then(() => {
+          let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
+          if (player) {
+            gameContentStore.addPlayer(player);
+            gameContentStore.setMyId(player.id);
+          } else {
+            return gameContentStore.getProfile();
+          }
+        })
+        .then(() => {
+          gameContentStore.setRoomId(roomId || gameContentStore.myId);
+          initSocket();
+          joinRoom();
+          if (gameContentStore.isHost) {
+            onJoinRoom();
+          } else {
+            onBloadcastPlayers();
+            onDecideRoles(() => {
+              this.$router.push('role-action');
+            });
+          }
+        });
+    },
     async logout(): Promise<void> {
       await gameContentStore.logout();
       this.$router.push('/');
