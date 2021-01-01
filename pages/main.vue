@@ -81,7 +81,7 @@ export default Vue.extend({
   methods: {
     async logout(): Promise<void> {
       await gameContentStore.logout();
-      window.location.reload();
+      this.$router.push('/');
     },
     async share(): Promise<void> {
       await gameContentStore.share(window.location.origin);
