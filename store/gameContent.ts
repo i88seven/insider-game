@@ -78,10 +78,13 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async initLiff(player?: Player): Promise<void> {
+  async initLiff({ redirectUri, player }: { redirectUri: string; player?: Player }): Promise<void> {
     // TODO ログインできるアカウントがないので、mock で対処
-    await this.liffLogin();
     await liff.init({ liffId: process.env.LIFF_ID || '' });
+    const isLoggedIn: boolean = await liff.isLoggedIn();
+    if (!isLoggedIn) {
+      await liff.login({ redirectUri });
+    }
     if (player) {
       this.addPlayer(player);
       this.SET_MY_ID(player.id);
@@ -96,18 +99,16 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async liffLogin(): Promise<void> {
-    await liff.init({ liffId: process.env.LIFF_ID || '' });
-    const isLoggedIn: boolean = await liff.isLoggedIn();
-    if (isLoggedIn) {
-      return;
+  async logout(): Promise<void> {
+    if (await liff.isLoggedIn()) {
+      await liff.logout();
     }
-    await liff.login();
   }
 
   @Action({ rawError: true })
-  async share(url: string): Promise<boolean> {
-    const message = 'インサイダーゲームに招待されています！ \n' + `${url}?roomId=${this.roomId}`;
+  async share(urlOrigin: string): Promise<boolean> {
+    const message =
+      'インサイダーゲームに招待されています！ \n' + `${urlOrigin}?roomId=${this.roomId}`;
     await liff.shareTargetPicker([
       {
         type: 'text',

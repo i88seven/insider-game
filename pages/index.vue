@@ -15,8 +15,10 @@
       </v-simple-table>
     </v-card-text>
     <v-card-actions v-if="isHost">
-      <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
       <v-spacer />
+      <v-btn @click="logout">ログアウト</v-btn>
+      <v-spacer />
+      <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
       <v-btn :disabled="players.length < 3" color="primary" @click="start">始める</v-btn>
     </v-card-actions>
   </v-card>
@@ -47,15 +49,14 @@ export default Vue.extend({
   },
   async mounted(): Promise<void> {
     gameContentStore.init();
+    const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
     const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
     const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
+    const redirectUri = window.location.origin + roomId;
     let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
-    await gameContentStore.initLiff(player);
+    await gameContentStore.initLiff({ redirectUri, player });
 
-    const roomId = this.$route.query.roomId
-      ? this.$route.query.roomId.toString()
-      : gameContentStore.myId;
-    gameContentStore.setRoomId(roomId);
+    gameContentStore.setRoomId(roomId || gameContentStore.myId);
     initSocket();
     joinRoom();
     if (gameContentStore.isHost) {
@@ -68,6 +69,10 @@ export default Vue.extend({
     }
   },
   methods: {
+    async logout(): Promise<void> {
+      await gameContentStore.logout();
+      window.location.reload();
+    },
     async share(): Promise<void> {
       await gameContentStore.share(window.location.origin);
     },
