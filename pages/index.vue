@@ -17,7 +17,7 @@ export default Vue.extend({
     gameContentStore.init();
     const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
     await gameContentStore.initLiff();
-    if (!liff.isInClient() && !liff.isLoggedIn()) {
+    if (!liff.isLoggedIn()) {
       await gameContentStore.loginLiff();
       return;
     }
