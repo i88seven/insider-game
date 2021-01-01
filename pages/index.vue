@@ -28,18 +28,19 @@ export default Vue.extend({
     liff
       .init({ liffId: process.env.LIFF_ID || '' })
       .then(() => {
+        if (!liff.isInClient() && !liff.isLoggedIn()) {
+          liff.login({ redirectUri: location.href });
+        }
         this.debugMsg = `after init liff`;
       })
       .catch((err) => {
         this.debugMsg = err;
-        return;
       });
-    if (!liff.isLoggedIn()) {
-      this.debugMsg = `is logged in`;
-      await gameContentStore.loginLiff();
-      this.debugMsg = `after login liff`;
-      return;
-    }
+    // if (!liff.isLoggedIn()) {
+    //   this.debugMsg = `is logged in`;
+    //   this.debugMsg = `after login liff`;
+    //   return;
+    // }
     if (roomId) {
       this.debugMsg = `roomId: ${roomId}`;
       this.$router.push({ path: 'main', query: { roomId } });
