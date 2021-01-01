@@ -14,9 +14,8 @@
         </template>
       </v-simple-table>
     </v-card-text>
+    <v-btn v-if="isLoggedIn" @click="logout">ログアウト</v-btn>
     <v-card-actions v-if="isHost">
-      <v-spacer />
-      <v-btn @click="logout">ログアウト</v-btn>
       <v-spacer />
       <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
       <v-btn :disabled="players.length < 3" color="primary" @click="start">始める</v-btn>
@@ -46,6 +45,9 @@ export default Vue.extend({
     },
     isHost: () => {
       return gameContentStore.isHost;
+    },
+    isLoggedIn: () => {
+      return liff.isLoggedIn();
     },
   },
   async mounted(): Promise<void> {
