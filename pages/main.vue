@@ -57,6 +57,8 @@ export default Vue.extend({
     const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
     if (!liff.isInClient()) {
       gameContentStore.initLiff();
+    } else if (!liff.isLoggedIn()) {
+      gameContentStore.loginLiff();
     }
     let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
     if (player) {
