@@ -86,7 +86,7 @@ export default Vue.extend({
       this.$router.push('/');
     },
     async share(): Promise<void> {
-      await gameContentStore.share(window.location.origin);
+      await gameContentStore.share();
     },
     start(): void {
       gameContentStore.randomSelectRoles();

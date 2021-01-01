@@ -34,6 +34,7 @@ export default {
   env: {
     API_URL: process.env.API_URL || '',
     LIFF_ID: process.env.LIFF_ID || '',
+    LIFF_URL: process.env.LIFF_URL || '',
     ENV: process.env.ENV || '',
   },
 

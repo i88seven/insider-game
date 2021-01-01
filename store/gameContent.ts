@@ -105,9 +105,10 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async share(urlOrigin: string): Promise<boolean> {
+  async share(): Promise<boolean> {
     const message =
-      'インサイダーゲームに招待されています！ \n' + `${urlOrigin}/main?roomId=${this.roomId}`;
+      'インサイダーゲームに招待されています！ \n' +
+      `${process.env.LIFF_URL}/main?roomId=${this.roomId}`;
     await liff.shareTargetPicker([
       {
         type: 'text',
