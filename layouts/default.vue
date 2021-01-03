@@ -1,5 +1,10 @@
 <template>
   <v-app dark>
+    <v-app-bar app>
+      <div style="text-align: right">
+        <v-btn v-if="isRoomExist" @click="reload">更新</v-btn>
+      </div>
+    </v-app-bar>
     <v-main>
       <v-container>
         <nuxt />
@@ -11,6 +16,22 @@
   </v-app>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+import Vue from 'vue';
+import { reload } from '~/utils/socket';
+import { gameContentStore } from '~/store';
+
+export default Vue.extend({
+  name: 'Layout',
+  computed: {
+    isRoomExist(): boolean {
+      return gameContentStore.storedRoomId !== '';
+    },
+  },
+  methods: {
+    reload(): void {
+      reload();
+    },
+  },
+});
 </script>

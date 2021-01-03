@@ -3,6 +3,8 @@ import { gameContentStore } from '~/store';
 import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
 
+type GameRoutes = 'main' | 'role-action' | 'count-down' | 'vote' | 'game-result' | 'failure-result';
+
 let socket: Socket;
 
 function initSocket(): void {
@@ -128,6 +130,84 @@ async function onNextGame(routeAction: any): Promise<void> {
   });
 }
 
+interface ReloadResponse {
+  route: GameRoutes;
+  players: Player[];
+  roles: { [key: string]: Role };
+  subject: string;
+  discussionTimeLimit: string;
+  searchTimeLimit: string;
+  votes: { [key: string]: string };
+}
+
+function reload(): void {
+  socket.emit('reload', gameContentStore.storedRoomId, gameContentStore.myId);
+}
+
+function onReload(): void {
+  if (!socket) {
+    return;
+  }
+  socket.on('reload', (fromId: string) => {
+    const route = location.pathname.substring(1);
+    function isGameRoute(route: string): route is GameRoutes {
+      return [
+        'main',
+        'role-action',
+        'count-down',
+        'vote',
+        'game-result',
+        'failure-result',
+      ].includes(route);
+    }
+    if (!isGameRoute(route)) {
+      return;
+    }
+    const states: ReloadResponse = {
+      route: route,
+      players: gameContentStore.storedPlayers,
+      roles: gameContentStore.storedRoles,
+      subject: gameContentStore.storedSubject,
+      discussionTimeLimit: gameContentStore.storedDiscussionTimeLimit
+        ? gameContentStore.storedDiscussionTimeLimit.toString()
+        : '',
+      searchTimeLimit: gameContentStore.storedSearchTimeLimit
+        ? gameContentStore.storedSearchTimeLimit.toString()
+        : '',
+      votes: gameContentStore.storedVotes,
+    };
+    socket.emit('reload-response', gameContentStore.storedRoomId, fromId, states);
+  });
+}
+
+function onReloadResponse(routeAction: any): void {
+  if (!socket) {
+    return;
+  }
+  socket.on('reload-response', (toId: string, response: ReloadResponse) => {
+    if (gameContentStore.myId !== toId) {
+      return;
+    }
+    const route = response.route;
+    gameContentStore.initGameContent();
+    gameContentStore.setPlayers(response.players);
+    if (route !== 'main') {
+      gameContentStore.setRoles(response.roles);
+      gameContentStore.setSubject(response.subject);
+    }
+    if (route === 'count-down') {
+      gameContentStore.setDiscussionTimeLimit(DateTime.fromISO(response.discussionTimeLimit));
+    }
+    if (route === 'vote') {
+      gameContentStore.setSearchTimeLimit(DateTime.fromISO(response.searchTimeLimit));
+    }
+    if (route === 'game-result') {
+      gameContentStore.setVotes(response.votes);
+    }
+    routeAction(route);
+  });
+}
+
 export {
   initSocket,
   joinRoom,
@@ -147,4 +227,7 @@ export {
   onVoteResult,
   nextGame,
   onNextGame,
+  reload,
+  onReload,
+  onReloadResponse,
 };

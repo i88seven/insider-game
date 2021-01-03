@@ -34,6 +34,8 @@ import {
   onBloadcastPlayers,
   decideRoles,
   onDecideRoles,
+  onReload,
+  onReloadResponse,
 } from '~/utils/socket';
 
 export default Vue.extend({
@@ -81,6 +83,11 @@ export default Vue.extend({
               this.$router.push('role-action');
             });
           }
+          if (gameContentStore.isHost) {
+            onReload();
+            return;
+          }
+          onReloadResponse((route: string) => this.$router.push(route));
         });
     },
     async logout(): Promise<void> {
