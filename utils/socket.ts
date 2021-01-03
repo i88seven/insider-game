@@ -149,22 +149,23 @@ function onReload(): void {
     return;
   }
   socket.on('reload', (fromId: string) => {
-    const route = location.pathname.substring(1);
-    function isGameRoute(route: string): route is GameRoutes {
-      return [
-        'main',
-        'role-action',
-        'count-down',
-        'vote',
-        'game-result',
-        'failure-result',
-      ].includes(route);
-    }
-    if (!isGameRoute(route)) {
-      return;
+    const gameRoute = getGameRoute(location.pathname);
+    function getGameRoute(pathname: string): GameRoutes {
+      const route = pathname.substring(1);
+      if (
+        'main' === route ||
+        'role-action' === route ||
+        'count-down' === route ||
+        'vote' === route ||
+        'game-result' === route ||
+        'failure-result' === route
+      ) {
+        return route;
+      }
+      return 'main';
     }
     const states: ReloadResponse = {
-      route: route,
+      route: gameRoute,
       players: gameContentStore.storedPlayers,
       roles: gameContentStore.storedRoles,
       subject: gameContentStore.storedSubject,
