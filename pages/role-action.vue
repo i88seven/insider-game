@@ -54,10 +54,8 @@ export default Vue.extend({
     },
   },
   mounted() {
-    if (this.myRole === 'insider') {
-      onDecideSubject();
-    }
     if (this.myRole === 'insider' || this.myRole === 'citizen') {
+      onDecideSubject();
       onStartGame(() => {
         this.$router.push('count-down');
       });
