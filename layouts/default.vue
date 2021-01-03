@@ -2,7 +2,7 @@
   <v-app dark>
     <v-app-bar app>
       <div style="text-align: right">
-        <v-btn v-if="isRoomExist" @click="reload">更新</v-btn>
+        <v-btn v-if="isRoomExist && !isHost" @click="reload">更新</v-btn>
       </div>
     </v-app-bar>
     <v-main>
@@ -26,6 +26,9 @@ export default Vue.extend({
   computed: {
     isRoomExist(): boolean {
       return gameContentStore.storedRoomId !== '';
+    },
+    isHost(): boolean {
+      return gameContentStore.isHost;
     },
   },
   methods: {
