@@ -41,6 +41,7 @@ export default Vue.extend({
   mounted() {
     if (this.myRole === 'insider' || this.myRole === 'citizen') {
       onCorrect(() => {
+        this.stopInterval();
         this.$router.push('vote');
       });
     }
