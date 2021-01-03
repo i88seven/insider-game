@@ -21,7 +21,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" @click="vote">投票</v-btn>
+      <v-btn :disabled="voted" color="primary" @click="vote">投票</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -33,15 +33,23 @@ import { vote, onVote, voteResult, onVoteResult } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Player, Role } from '~/store/type';
 
+interface Data {
+  timeCount: string;
+  intervalId: NodeJS.Timeout | undefined;
+  votedPlayerId: string;
+  voted: boolean;
+}
+
 export default Vue.extend({
   name: 'Vote',
 
   components: {},
-  data(): { timeCount: string; intervalId: NodeJS.Timeout | undefined; votedPlayerId: string } {
+  data(): Data {
     return {
       timeCount: '--:--',
       intervalId: undefined,
       votedPlayerId: '',
+      voted: false,
     };
   },
   computed: {
@@ -98,6 +106,7 @@ export default Vue.extend({
         });
         voteResult();
       }
+      this.voted = true;
       if (gameContentStore.votesLength === gameContentStore.players.length) {
         this.$router.push('game-result');
       }
