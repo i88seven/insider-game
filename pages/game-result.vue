@@ -11,6 +11,7 @@
           <tbody>
             <tr v-for="voteResult in voteResults" :key="voteResult.id">
               <td>{{ voteResult.fromName }}</td>
+              <td>→</td>
               <td>{{ voteResult.toName }}</td>
             </tr>
           </tbody>
