@@ -51,44 +51,39 @@ export default Vue.extend({
   },
   async mounted(): Promise<void> {
     gameContentStore.init();
-    setTimeout(() => {
-      this.liffInit();
+    liff.init({ liffId: process.env.LIFF_ID || '' });
+    await setTimeout(() => {
+      this.afterInitLiff();
     }, 0);
   },
   methods: {
-    async liffInit(): Promise<void> {
+    async afterInitLiff(): Promise<void> {
       const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
       const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
       const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
-      liff
-        .init({ liffId: process.env.LIFF_ID || '' })
-        .then(() => {
-          let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
-          if (player) {
-            gameContentStore.addPlayer(player);
-            gameContentStore.setMyId(player.id);
-          } else {
-            return gameContentStore.getProfile();
-          }
-        })
-        .then(() => {
-          gameContentStore.setRoomId(roomId || gameContentStore.myId);
-          initSocket();
-          joinRoom();
-          if (gameContentStore.isHost) {
-            onJoinRoom();
-          } else {
-            onBloadcastPlayers();
-            onDecideRoles(() => {
-              this.$router.push('role-action');
-            });
-          }
-          if (gameContentStore.isHost) {
-            onReload();
-            return;
-          }
-          onReloadResponse((route: string) => this.$router.push(route));
+      let player = paramId && paramName ? { id: paramId, name: paramName } : undefined; // TODO
+      if (player) {
+        gameContentStore.addPlayer(player);
+        gameContentStore.setMyId(player.id);
+      } else {
+        await gameContentStore.getProfile();
+      }
+      gameContentStore.setRoomId(roomId || gameContentStore.myId);
+      initSocket();
+      joinRoom();
+      if (gameContentStore.isHost) {
+        onJoinRoom();
+      } else {
+        onBloadcastPlayers();
+        onDecideRoles(() => {
+          this.$router.push('role-action');
         });
+      }
+      if (gameContentStore.isHost) {
+        onReload();
+        return;
+      }
+      onReloadResponse((route: string) => this.$router.push(route));
     },
     async logout(): Promise<void> {
       await gameContentStore.logout();
