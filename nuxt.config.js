@@ -54,7 +54,7 @@ export default {
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
-  modules: ['@nuxtjs/axios'],
+  modules: ['@nuxtjs/axios', 'nuxt-i18n'],
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -62,6 +62,20 @@ export default {
     theme: {
       dark: true,
     },
+  },
+
+  i18n: {
+    locales: ['ja', 'en'],
+    defaultLocale: 'ja',
+    vueI18n: {
+      fallbackLocale: 'ja',
+      silentFallbackWarn: true,
+      messages: {
+        ja: require('./locales/ja.json'),
+        en: require('./locales/en.json'),
+      },
+    },
+    vuex: false,
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
