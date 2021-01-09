@@ -1,6 +1,9 @@
 <template>
   <v-card>
     <v-card-title class="headline">あなたは {{ myRole }} です。</v-card-title>
+    <v-btn v-if="myRole === 'master'" :loading="loadingSubjects" @click="getRandomSubject">
+      お題を自動取得
+    </v-btn>
     <v-card-text v-if="myRole === 'master' && storedSubject === ''">
       <v-text-field
         v-model="subject"
@@ -43,6 +46,7 @@ export default Vue.extend({
         required: (value: string) => !!value || '入力してください',
         counter: (value: string) => value.length <= 20 || '20文字以下にしてください。',
       },
+      loadingSubjects: false,
     };
   },
   computed: {
@@ -62,6 +66,12 @@ export default Vue.extend({
     }
   },
   methods: {
+    async getRandomSubject(): Promise<void> {
+      this.loadingSubjects = true;
+      await gameContentStore.loadSubjects(this.$axios);
+      this.subject = await gameContentStore.getSubject();
+      this.loadingSubjects = false;
+    },
     setSubject(): void {
       if (this.myRole !== 'master') {
         return;

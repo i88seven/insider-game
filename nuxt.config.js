@@ -35,6 +35,7 @@ export default {
     API_URL: process.env.API_URL || '',
     LIFF_ID: process.env.LIFF_ID || '',
     LIFF_URL: process.env.LIFF_URL || '',
+    GAS_URL: process.env.GAS_URL || '',
     ENV: process.env.ENV || '',
   },
 
@@ -53,7 +54,7 @@ export default {
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
-  modules: [],
+  modules: ['@nuxtjs/axios'],
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {

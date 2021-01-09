@@ -17,6 +17,7 @@ class GameContentModule extends VuexModule {
   decidedRoles: { [key: string]: Role } = {};
   votes: { [key: string]: string } = {};
   subject: string = '';
+  loadedSubjects: string[] = [];
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
 
@@ -38,6 +39,11 @@ class GameContentModule extends VuexModule {
   @Mutation
   SET_SUBJECT(subject: string): void {
     this.subject = subject;
+  }
+
+  @Mutation
+  SET_LOADED_SUBJECTS(subjects: string[]): void {
+    this.loadedSubjects = subjects;
   }
 
   @Mutation
@@ -149,6 +155,22 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   setPlayers(players: Player[]): void {
     this.SET_PLAYERS(players);
+  }
+
+  @Action({ rawError: true })
+  async loadSubjects(axios: any): Promise<void> {
+    // TODO axios は受け取りたくない
+    if (this.loadedSubjects.length > 0) {
+      return;
+    }
+    const subjects = await axios.$get(process.env.GAS_URL + '/exec' || '');
+    this.SET_LOADED_SUBJECTS(subjects);
+  }
+
+  @Action({ rawError: true })
+  getSubject(): string {
+    const randomIndex = Math.floor(Math.random() * this.loadedSubjects.length);
+    return this.loadedSubjects[randomIndex];
   }
 
   @Action({ rawError: true })
