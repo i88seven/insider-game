@@ -22,6 +22,8 @@ export default Vue.extend({
   methods: {
     liffInit(): void {
       const roomId = this.$route.query.roomId ? this.$route.query.roomId.toString() : '';
+      const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
+      const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
       liff.init(
         { liffId: process.env.LIFF_ID || '' },
         () => {
@@ -30,7 +32,7 @@ export default Vue.extend({
           }
           if (!liff.isLoggedIn()) {
             const locationPath = location.origin + '/main';
-            const redirectUri = roomId ? locationPath + `?roomId=${roomId}` : locationPath;
+            const redirectUri = locationPath + `?roomId=${roomId}&id=${paramId}&name=${paramName}`;
             liff.login({ redirectUri });
             return;
           }
