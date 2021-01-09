@@ -4,6 +4,7 @@
     <v-btn v-if="myRole === 'master'" :loading="loadingSubjects" @click="getRandomSubject">
       お題を自動取得
     </v-btn>
+    <p v-if="myRole === 'insider' || myRole === 'citizen'">マスターは {{ masterMame }} です</p>
     <v-card-text v-if="myRole === 'master' && storedSubject === ''">
       <v-text-field
         v-model="subject"
@@ -55,6 +56,9 @@ export default Vue.extend({
     },
     myRole(): Role | undefined {
       return gameContentStore.myRole;
+    },
+    masterMame(): string {
+      return gameContentStore.master?.name ?? '';
     },
   },
   mounted() {
