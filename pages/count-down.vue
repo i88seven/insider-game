@@ -2,9 +2,15 @@
   <v-card>
     <v-card-title class="headline">話し合い</v-card-title>
     <v-card-text>
-      <p>残り</p>
-      <h3>{{ timeCount }}</h3>
-      <h3 v-if="myRole === 'master' || myRole === 'insider'">お題は {{ subject }} です</h3>
+      <p>
+        残り
+        <span :class="'limit' + (isNearLimit ? ' near-limit' : '')">{{ timeCount }}</span>
+      </p>
+      <h3 v-if="myRole === 'master' || myRole === 'insider'">
+        お題は
+        <span class="subject">{{ subject }}</span>
+        です
+      </h3>
     </v-card-text>
     <v-card-actions v-if="myRole === 'master'">
       <v-spacer />
@@ -24,10 +30,11 @@ export default Vue.extend({
   name: 'CountDown',
 
   components: {},
-  data(): { timeCount: string; intervalId: NodeJS.Timeout | undefined } {
+  data(): { timeCount: string; intervalId: NodeJS.Timeout | undefined; isNearLimit: boolean } {
     return {
       timeCount: '--:--',
       intervalId: undefined,
+      isNearLimit: false,
     };
   },
   computed: {
@@ -39,6 +46,7 @@ export default Vue.extend({
     },
   },
   mounted() {
+    this.isNearLimit = false;
     if (this.myRole === 'insider' || this.myRole === 'citizen') {
       onCorrect(() => {
         this.stopInterval();
@@ -57,6 +65,7 @@ export default Vue.extend({
         this.$router.push('failure-result');
         return;
       }
+      this.isNearLimit = diff.seconds < 30;
       this.timeCount =
         diff.minutes.toString().padStart(2, '0') +
         ':' +
@@ -78,3 +87,10 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+.limit {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+</style>

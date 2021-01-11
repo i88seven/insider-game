@@ -3,11 +3,14 @@
     <v-card-title class="headline">正解</v-card-title>
     <v-card-text>
       <h3>お題は {{ storedSubject }} でした</h3>
-      <p>インサイダーを探せ!</p>
+      <p>
+        <span class="insider">インサイダー</span>
+        を探せ!
+      </p>
     </v-card-text>
     <v-card-text>
       <p>残り</p>
-      <h3>{{ timeCount }}</h3>
+      <h3 :class="isNearLimit ? 'near-limit' : ''">{{ timeCount }}</h3>
     </v-card-text>
     <v-card-text>
       <v-radio-group v-model="votedPlayerId">
@@ -38,6 +41,7 @@ interface Data {
   intervalId: NodeJS.Timeout | undefined;
   votedPlayerId: string;
   voted: boolean;
+  isNearLimit: boolean;
 }
 
 export default Vue.extend({
@@ -50,6 +54,7 @@ export default Vue.extend({
       intervalId: undefined,
       votedPlayerId: '',
       voted: false,
+      isNearLimit: false,
     };
   },
   computed: {
@@ -69,6 +74,7 @@ export default Vue.extend({
     },
   },
   mounted() {
+    this.isNearLimit = false;
     if (this.myRole === 'master') {
       onVote(() => {
         this.$router.push('game-result');
@@ -90,6 +96,7 @@ export default Vue.extend({
         this.$router.push('game-result');
         return;
       }
+      this.isNearLimit = diff.seconds < 30;
       this.timeCount =
         diff.minutes.toString().padStart(2, '0') +
         ':' +

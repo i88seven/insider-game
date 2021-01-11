@@ -2,13 +2,23 @@
   <v-card>
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
-      <h3>インサイダー・一般人 負け</h3>
+      <h3>
+        インサイダー・一般人
+        <span class="lose">負け</span>
+      </h3>
     </v-card-text>
     <v-card-text>
-      <h3>お題は {{ storedSubject }} でした</h3>
+      <h3>
+        お題は
+        <span class="subject">{{ storedSubject }}</span>
+        でした
+      </h3>
     </v-card-text>
     <v-card-text>
-      <h3>インサイダーは {{ insiderName }} でした</h3>
+      <h3>
+        <span class="insider">インサイダー</span>
+        は {{ insiderName }} でした
+      </h3>
     </v-card-text>
     <v-card-actions v-if="isHost">
       <v-spacer />

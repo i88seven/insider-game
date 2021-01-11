@@ -1,0 +1,29 @@
+:root {
+  --red-color: #c65052;
+  --blue-color: #66d9ef;
+  --green-color: #a1db2d;
+}
+
+.master,
+.master.theme--dark.v-icon,
+.correct,
+.lose {
+  color: var(--blue-color);
+}
+
+.insider,
+.insider.theme--dark.v-icon,
+.win,
+.near-limit {
+  color: var(--red-color);
+}
+
+.citizen,
+.citizen.theme--dark.v-icon {
+  color: var(--green-color);
+}
+
+.subject {
+  font-weight: bold;
+  font-size: 1.3rem;
+}

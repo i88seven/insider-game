@@ -1,10 +1,21 @@
 <template>
   <v-card>
-    <v-card-title class="headline">あなたは {{ $t(myRole) }} です</v-card-title>
-    <v-btn v-if="myRole === 'master'" :loading="loadingSubjects" @click="getRandomSubject">
+    <v-card-title class="headline">
+      あなたは
+      <span :class="myRole">{{ $t(myRole) }}</span>
+      です
+    </v-card-title>
+    <v-btn
+      v-if="myRole === 'master' && !storedSubject"
+      :loading="loadingSubjects"
+      @click="getRandomSubject"
+    >
       お題を自動取得
     </v-btn>
-    <p v-if="myRole === 'insider' || myRole === 'citizen'">マスターは {{ masterMame }} です</p>
+    <p v-if="myRole === 'insider' || myRole === 'citizen'">
+      <span class="master">マスター</span>
+      は {{ masterMame }} です
+    </p>
     <v-card-text v-if="myRole === 'master' && storedSubject === ''">
       <v-text-field
         v-model="subject"
@@ -16,7 +27,9 @@
       />
     </v-card-text>
     <p v-if="(myRole === 'master' || myRole === 'insider') && storedSubject">
-      お題は {{ storedSubject }} です
+      お題は
+      <span class="subject">{{ storedSubject }}</span>
+      です
     </p>
     <v-card-actions v-if="myRole === 'master' && storedSubject === ''">
       <v-spacer />

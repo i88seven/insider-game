@@ -15,8 +15,8 @@
         <v-carousel-item v-for="rulePage in rulePages" :key="rulePage">
           <v-row class="rule-item" align="center" justify="center">
             <div>
-              <v-icon>{{ iconLabelMap[rulePage] }}</v-icon>
-              <span>{{ $t(rulePage) }}</span>
+              <v-icon :class="rulePage">{{ iconLabelMap[rulePage] }}</v-icon>
+              <span :class="rulePage">{{ $t(rulePage) }}</span>
               <p class="rule">{{ $t(`rules.${rulePage}`) }}</p>
             </div>
           </v-row>

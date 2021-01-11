@@ -2,7 +2,12 @@
   <v-card>
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
-      <h3>インサイダー {{ insiderResultText }}</h3>
+      <h3>
+        インサイダー
+        <span :class="isLose ? 'lose' : 'win'">
+          {{ insiderResultText }}
+        </span>
+      </h3>
     </v-card-text>
     <v-card-text>
       投票結果
@@ -19,7 +24,10 @@
       </v-simple-table>
     </v-card-text>
     <v-card-text>
-      <h3>インサイダーは {{ insiderName }} でした</h3>
+      <h3>
+        <span class="insider">インサイダー</span>
+        は {{ insider ? insider.name : '' }} でした
+      </h3>
     </v-card-text>
     <v-card-actions v-if="isHost">
       <v-spacer />
@@ -33,6 +41,7 @@
 import Vue from 'vue';
 import { nextGame, onNextGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
+import { Player, Role } from '~/store/type';
 
 interface VoteResult {
   fromName: string;
@@ -60,14 +69,20 @@ export default Vue.extend({
         }
       );
     },
-    insiderName(): string {
-      return gameContentStore.insider ? gameContentStore.insider.name : '';
+    insider(): Player | undefined {
+      return gameContentStore.insider;
     },
     isHost(): boolean {
       return gameContentStore.isHost;
     },
     insiderResultText(): string {
       return gameContentStore.isInsiderLose ? '負け' : '勝ち';
+    },
+    isLose(): boolean {
+      return (
+        (gameContentStore.isInsiderLose && gameContentStore.myRole === 'insider') ||
+        (!gameContentStore.isInsiderLose && gameContentStore.myRole !== 'insider')
+      );
     },
   },
   mounted() {

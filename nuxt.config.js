@@ -29,7 +29,7 @@ export default {
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [],
+  css: ['~/assets/variables.css'],
 
   env: {
     API_URL: process.env.API_URL || '',
