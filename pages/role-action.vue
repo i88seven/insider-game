@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title class="headline">
       あなたは
-      <span :class="myRole">{{ $t(myRole) }}</span>
+      <role-text :role="myRole" />
       です
     </v-card-title>
     <v-btn
@@ -13,7 +13,7 @@
       お題を自動取得
     </v-btn>
     <p v-if="myRole === 'insider' || myRole === 'citizen'">
-      <span class="master">マスター</span>
+      <role-text role="master" />
       は {{ masterMame }} です
     </p>
     <v-card-text v-if="myRole === 'master' && storedSubject === ''">
@@ -44,6 +44,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import RoleText from '~/components/role-text.vue';
 import { decideSubject, onDecideSubject, startGame, onStartGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
@@ -51,7 +52,7 @@ import { Role } from '~/store/type';
 export default Vue.extend({
   name: 'RoleAction',
 
-  components: {},
+  components: { RoleText },
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {

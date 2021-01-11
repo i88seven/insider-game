@@ -3,7 +3,9 @@
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
       <h3>
-        インサイダー・一般人
+        <role-text role="insider" />
+        ・
+        <role-text role="citizen" />
         <span class="lose">負け</span>
       </h3>
     </v-card-text>
@@ -16,7 +18,7 @@
     </v-card-text>
     <v-card-text>
       <h3>
-        <span class="insider">インサイダー</span>
+        <role-text role="insider" />
         は {{ insiderName }} でした
       </h3>
     </v-card-text>
@@ -30,13 +32,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import RoleText from '~/components/role-text.vue';
 import { nextGame, onNextGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 
 export default Vue.extend({
   name: 'FailureResult',
 
-  components: {},
+  components: { RoleText },
   computed: {
     storedSubject(): string {
       return gameContentStore.storedSubject;

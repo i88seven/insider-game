@@ -4,7 +4,7 @@
     <v-card-text>
       <h3>お題は {{ storedSubject }} でした</h3>
       <p>
-        <span class="insider">インサイダー</span>
+        <role-text role="insider" />
         を探せ!
       </p>
     </v-card-text>
@@ -32,6 +32,7 @@
 <script lang="ts">
 import { DateTime } from 'luxon';
 import Vue from 'vue';
+import RoleText from '~/components/role-text.vue';
 import { vote, onVote, voteResult, onVoteResult } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Player, Role } from '~/store/type';
@@ -47,7 +48,7 @@ interface Data {
 export default Vue.extend({
   name: 'Vote',
 
-  components: {},
+  components: { RoleText },
   data(): Data {
     return {
       timeCount: '--:--',

@@ -3,7 +3,7 @@
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
       <h3>
-        インサイダー
+        <role-text role="insider" />
         <span :class="isLose ? 'lose' : 'win'">
           {{ insiderResultText }}
         </span>
@@ -15,19 +15,21 @@
         <template #default>
           <tbody>
             <tr v-for="voteResult in voteResults" :key="voteResult.id">
-              <td>{{ voteResult.fromName }}</td>
+              <td>
+                <role-text :role="voteResult.fromRole" :name="voteResult.fromName" />
+              </td>
               <td>→</td>
-              <td>{{ voteResult.toName }}</td>
+              <td>
+                <role-text
+                  v-if="voteResult.toName"
+                  :role="voteResult.toRole"
+                  :name="voteResult.toName"
+                />
+              </td>
             </tr>
           </tbody>
         </template>
       </v-simple-table>
-    </v-card-text>
-    <v-card-text>
-      <h3>
-        <span class="insider">インサイダー</span>
-        は {{ insider ? insider.name : '' }} でした
-      </h3>
     </v-card-text>
     <v-card-actions v-if="isHost">
       <v-spacer />
@@ -39,19 +41,22 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import RoleText from '~/components/role-text.vue';
 import { nextGame, onNextGame } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Player, Role } from '~/store/type';
 
 interface VoteResult {
+  fromRole?: Role;
   fromName: string;
+  toRole?: Role;
   toName: string;
 }
 
 export default Vue.extend({
   name: 'GameResult',
 
-  components: {},
+  components: { RoleText },
   computed: {
     storedSubject(): string {
       return gameContentStore.storedSubject;
@@ -63,7 +68,9 @@ export default Vue.extend({
             return target.id === gameContentStore.storedVotes[player.id];
           });
           return {
+            fromRole: gameContentStore.storedRoles[player.id],
             fromName: player.name,
+            toRole: toPlayer ? gameContentStore.storedRoles[toPlayer.id] : undefined,
             toName: toPlayer ? toPlayer.name : '',
           };
         }
@@ -83,6 +90,13 @@ export default Vue.extend({
         (gameContentStore.isInsiderLose && gameContentStore.myRole === 'insider') ||
         (!gameContentStore.isInsiderLose && gameContentStore.myRole !== 'insider')
       );
+    },
+    iconLabelMap(): { [key: string]: string } {
+      return {
+        master: 'mdi-account-cowboy-hat',
+        insider: 'mdi-emoticon-devil',
+        citizen: 'mdi-account',
+      };
     },
   },
   mounted() {
