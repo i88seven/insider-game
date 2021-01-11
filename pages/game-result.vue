@@ -3,10 +3,8 @@
     <v-card-title class="headline">結果</v-card-title>
     <v-card-text>
       <h3>
-        <role-text role="insider" />
-        <span :class="isLose ? 'lose' : 'win'">
-          {{ insiderResultText }}
-        </span>
+        あなたの
+        <span :class="isLose ? 'lose' : 'win'">{{ isLose ? '負け' : '勝ち' }}</span>
       </h3>
     </v-card-text>
     <v-card-text>
@@ -81,9 +79,6 @@ export default Vue.extend({
     },
     isHost(): boolean {
       return gameContentStore.isHost;
-    },
-    insiderResultText(): string {
-      return gameContentStore.isInsiderLose ? '負け' : '勝ち';
     },
     isLose(): boolean {
       return (

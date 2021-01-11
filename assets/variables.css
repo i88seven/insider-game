@@ -2,18 +2,17 @@
   --red-color: #c65052;
   --blue-color: #66d9ef;
   --green-color: #a1db2d;
+  --yellow-color: #e6db74;
+  --glay-color: #87836e;
 }
 
 .master,
-.master.theme--dark.v-icon,
-.correct,
-.lose {
+.master.theme--dark.v-icon {
   color: var(--blue-color);
 }
 
 .insider,
 .insider.theme--dark.v-icon,
-.win,
 .near-limit {
   color: var(--red-color);
 }
@@ -21,6 +20,14 @@
 .citizen,
 .citizen.theme--dark.v-icon {
   color: var(--green-color);
+}
+
+.win {
+  color: var(--yellow-color);
+}
+
+.lose {
+  color: var(--glay-color);
 }
 
 .subject {
