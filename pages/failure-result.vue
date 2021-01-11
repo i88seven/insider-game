@@ -12,7 +12,8 @@
     </v-card-text>
     <v-card-actions v-if="isHost">
       <v-spacer />
-      <v-btn color="primary" @click="nextGame">次のゲーム</v-btn>
+      <v-btn @click="nextGame(true)">メンバーを変更</v-btn>
+      <v-btn color="primary" @click="nextGame(false)">次のゲーム</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -39,18 +40,20 @@ export default Vue.extend({
   },
   mounted() {
     if (!this.isHost) {
-      onNextGame(() => {
-        this.$router.push('role-action');
+      onNextGame((memberChange: boolean) => {
+        this.$router.push(memberChange ? 'member-change' : 'role-action');
       });
     }
   },
   methods: {
-    nextGame(): void {
+    nextGame(memberChange: boolean): void {
       if (this.isHost) {
         gameContentStore.initGameContent();
-        gameContentStore.randomSelectRoles();
-        nextGame();
-        this.$router.push('role-action');
+        if (!memberChange) {
+          gameContentStore.randomSelectRoles();
+        }
+        nextGame(memberChange);
+        this.$router.push(memberChange ? 'member-change' : 'role-action');
       }
     },
   },

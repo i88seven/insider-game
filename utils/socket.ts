@@ -118,15 +118,22 @@ function onVoteResult(routeAction: any): void {
   });
 }
 
-function nextGame(): void {
-  socket.emit('next-game', gameContentStore.storedRoomId, gameContentStore.storedRoles);
+function nextGame(memberChange: boolean): void {
+  socket.emit(
+    'next-game',
+    gameContentStore.storedRoomId,
+    memberChange,
+    gameContentStore.storedRoles
+  );
 }
 
 async function onNextGame(routeAction: any): Promise<void> {
-  socket.on('next-game', (roles: { [key: string]: Role }) => {
+  socket.on('next-game', (memberChange: boolean, roles: { [key: string]: Role }) => {
     gameContentStore.initGameContent();
-    gameContentStore.setRoles(roles);
-    routeAction();
+    if (!memberChange) {
+      gameContentStore.setRoles(roles);
+    }
+    routeAction(memberChange);
   });
 }
 
