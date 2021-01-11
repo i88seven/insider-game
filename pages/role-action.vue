@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="headline">あなたは {{ $t(myRole) }} です。</v-card-title>
+    <v-card-title class="headline">あなたは {{ $t(myRole) }} です</v-card-title>
     <v-btn v-if="myRole === 'master'" :loading="loadingSubjects" @click="getRandomSubject">
       お題を自動取得
     </v-btn>
@@ -45,7 +45,7 @@ export default Vue.extend({
       subject: '',
       rules: {
         required: (value: string) => !!value || '入力してください',
-        counter: (value: string) => value.length <= 20 || '20文字以下にしてください。',
+        counter: (value: string) => value.length <= 20 || '20文字以下にしてください',
       },
       loadingSubjects: false,
     };

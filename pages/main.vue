@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="headline">インサイダーゲーム</v-card-title>
-    <v-card-text>参加者を待っています。</v-card-text>
+    <v-card-text>参加者を待っています</v-card-text>
     <v-card-text>
       参加者
       <v-simple-table>
