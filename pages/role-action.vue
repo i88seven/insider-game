@@ -72,7 +72,7 @@ export default Vue.extend({
   methods: {
     async getRandomSubject(): Promise<void> {
       this.loadingSubjects = true;
-      await gameContentStore.loadSubjects(this.$axios);
+      await gameContentStore.loadSubjects();
       this.subject = await gameContentStore.getSubject();
       this.loadingSubjects = false;
     },

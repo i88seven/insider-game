@@ -2,6 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
 import liff from '@line/liff';
 import { Player, Role } from '~/store/type';
 import { DateTime } from 'luxon';
+import axios from 'axios';
 
 const DISCUSSION_TIME_MINUTES: number = 5;
 
@@ -158,13 +159,12 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async loadSubjects(axios: any): Promise<void> {
-    // TODO axios は受け取りたくない
+  async loadSubjects(): Promise<void> {
     if (this.loadedSubjects.length > 0) {
       return;
     }
-    const subjects = await axios.$get(process.env.GAS_URL + '/exec' || '');
-    this.SET_LOADED_SUBJECTS(subjects);
+    const { data } = await axios.get<string[]>(process.env.GAS_URL + '/exec');
+    this.SET_LOADED_SUBJECTS(data);
   }
 
   @Action({ rawError: true })
