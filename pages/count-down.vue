@@ -47,12 +47,10 @@ export default Vue.extend({
   },
   mounted() {
     this.isNearLimit = false;
-    if (this.myRole === 'insider' || this.myRole === 'citizen') {
-      onCorrect(() => {
-        this.stopInterval();
-        this.$router.push('vote');
-      });
-    }
+    onCorrect(() => {
+      this.stopInterval();
+      this.$router.push('vote');
+    });
     this.intervalId = setInterval(() => {
       const timeLimit = gameContentStore.storedDiscussionTimeLimit;
       if (!timeLimit) {
@@ -74,10 +72,14 @@ export default Vue.extend({
   },
   methods: {
     correct(): void {
-      this.stopInterval();
-      gameContentStore.generateSearchTimeLimit();
+      if (this.myRole !== 'master') {
+        return;
+      }
       correct();
-      this.$router.push('vote');
+      if (gameContentStore.isHost) {
+        this.stopInterval();
+        this.$router.push('vote');
+      }
     },
     stopInterval(): void {
       if (this.intervalId !== undefined) {

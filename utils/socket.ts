@@ -49,44 +49,75 @@ async function onDecideRoles(routeAction: any): Promise<void> {
   });
 }
 
-function decideSubject(): void {
-  socket.emit('decide-subject', gameContentStore.storedRoomId, gameContentStore.storedSubject);
+function decideSubject(subject: string): void {
+  if (gameContentStore.isHost) {
+    gameContentStore.setSubject(subject);
+  }
+  socket.emit('decide-subject', gameContentStore.storedRoomId, subject, gameContentStore.isHost);
 }
 
 function onDecideSubject(): void {
-  socket.on('decide-subject', (subject: string) => {
+  socket.on('decide-subject', (subject: string, fromHost: boolean) => {
+    if (!fromHost && !gameContentStore.isHost) {
+      return;
+    }
+    if (gameContentStore.isHost) {
+      decideSubject(subject);
+    }
     gameContentStore.setSubject(subject);
   });
 }
 
 function startGame(): void {
+  if (gameContentStore.isHost) {
+    gameContentStore.generateDiscussionTimeLimit();
+  }
   socket.emit(
     'start-game',
     gameContentStore.storedRoomId,
-    gameContentStore.storedDiscussionTimeLimit
+    gameContentStore.storedDiscussionTimeLimit,
+    gameContentStore.isHost
   );
 }
 
 async function onStartGame(routeAction: any): Promise<void> {
-  socket.on('start-game', (discussionTimeLimit: string) => {
-    gameContentStore.setDiscussionTimeLimit(DateTime.fromISO(discussionTimeLimit));
+  socket.on('start-game', (discussionTimeLimit: string, fromHost: boolean) => {
+    if (!fromHost && !gameContentStore.isHost) {
+      return;
+    }
+    if (gameContentStore.isHost) {
+      startGame();
+    } else {
+      gameContentStore.setDiscussionTimeLimit(DateTime.fromISO(discussionTimeLimit));
+    }
     routeAction();
   });
 }
 
 function correct(): void {
+  if (gameContentStore.isHost) {
+    gameContentStore.generateSearchTimeLimit();
+  }
   socket.emit(
     'correct',
     gameContentStore.storedRoomId,
     gameContentStore.storedSubject,
-    gameContentStore.storedSearchTimeLimit
+    gameContentStore.storedSearchTimeLimit,
+    gameContentStore.isHost
   );
 }
 
 async function onCorrect(routeAction: any): Promise<void> {
-  socket.on('correct', (subject: string, searchTimeLimit: string) => {
+  socket.on('correct', (subject: string, searchTimeLimit: string, fromHost: boolean) => {
+    if (!fromHost && !gameContentStore.isHost) {
+      return;
+    }
+    if (gameContentStore.isHost) {
+      correct();
+    } else {
+      gameContentStore.setSearchTimeLimit(DateTime.fromISO(searchTimeLimit));
+    }
     gameContentStore.setSubject(subject);
-    gameContentStore.setSearchTimeLimit(DateTime.fromISO(searchTimeLimit));
     routeAction();
   });
 }

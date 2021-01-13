@@ -37,7 +37,7 @@
     </v-card-actions>
     <v-card-actions v-if="myRole === 'master' && storedSubject">
       <v-spacer />
-      <v-btn color="primary" @click="startGame">始める</v-btn>
+      <v-btn color="primary" @click="start">始める</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -76,12 +76,10 @@ export default Vue.extend({
     },
   },
   mounted() {
-    if (this.myRole === 'insider' || this.myRole === 'citizen') {
-      onDecideSubject();
-      onStartGame(() => {
-        this.$router.push('count-down');
-      });
-    }
+    onDecideSubject();
+    onStartGame(() => {
+      this.$router.push('count-down');
+    });
   },
   methods: {
     async getRandomSubject(): Promise<void> {
@@ -94,16 +92,16 @@ export default Vue.extend({
       if (this.myRole !== 'master') {
         return;
       }
-      gameContentStore.setSubject(this.subject);
-      decideSubject();
+      decideSubject(this.subject);
     },
-    startGame(): void {
+    start(): void {
       if (this.myRole !== 'master') {
         return;
       }
-      gameContentStore.generateDiscussionTimeLimit();
       startGame();
-      this.$router.push('count-down');
+      if (gameContentStore.isHost) {
+        this.$router.push('count-down');
+      }
     },
   },
 });
