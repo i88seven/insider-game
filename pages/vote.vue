@@ -97,7 +97,7 @@ export default Vue.extend({
         this.$router.push('game-result');
         return;
       }
-      this.isNearLimit = diff.seconds < 30;
+      this.isNearLimit = diff.minutes < 1 && diff.seconds < 30;
       this.timeCount =
         diff.minutes.toString().padStart(2, '0') +
         ':' +
