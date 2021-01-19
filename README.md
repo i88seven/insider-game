@@ -6,15 +6,19 @@
 # install dependencies
 $ yarn install
 
-# serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
+$ cp .env.example .env
+# Set LIFF_ID etc..
 ```
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+## Build local server
+
+Build LIFF app. Set `https://localhost:3000` on endpoint URL.
+
+```bash
+# serve with hot reload at https://localhost:3000
+$ yarn dev
+```
+
+## Released Product
+
+https://liff.line.me/1655536378-keMgeWod/main
