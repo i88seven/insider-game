@@ -7,7 +7,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import liff from '@line/liff';
 import { gameContentStore } from '~/store';
 
 export default Vue.extend({
@@ -25,14 +24,14 @@ export default Vue.extend({
       const paramId = this.$route.query.id ? this.$route.query.id.toString() : '';
       const paramName = this.$route.query.name ? this.$route.query.name.toString() : '';
       try {
-        await liff.init({ liffId: process.env.LIFF_ID || '' });
-        if (liff.isInClient()) {
+        await gameContentStore.initLiff();
+        if (gameContentStore.isInClient) {
           return;
         }
-        if (!liff.isLoggedIn()) {
+        if (!gameContentStore.isLoggedIn) {
           const locationPath = location.origin + '/main';
           const redirectUri = locationPath + `?roomId=${roomId}&id=${paramId}&name=${paramName}`;
-          liff.login({ redirectUri });
+          gameContentStore.loginLiff(redirectUri);
           return;
         }
         if (roomId) {

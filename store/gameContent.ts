@@ -90,8 +90,8 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async loginLiff(): Promise<void> {
-    await liff.login();
+  async loginLiff(redirectUri: string): Promise<void> {
+    await liff.login({ redirectUri });
   }
 
   @Action({ rawError: true })
@@ -244,6 +244,14 @@ class GameContentModule extends VuexModule {
   @Action({ rawError: true })
   setVotes(votes: { [key: string]: string }): void {
     this.SET_VOTES(votes);
+  }
+
+  get isInClient(): boolean {
+    return liff.isInClient();
+  }
+
+  get isLoggedIn(): boolean {
+    return liff.isLoggedIn();
   }
 
   get storedRoomId(): string {

@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import liff from '@line/liff';
 import { gameContentStore } from '~/store';
 import {
   initSocket,
@@ -54,7 +53,7 @@ export default Vue.extend({
   },
   async mounted(): Promise<void> {
     gameContentStore.init();
-    liff.init({ liffId: process.env.LIFF_ID || '' });
+    gameContentStore.initLiff();
     await setTimeout(() => {
       this.afterInitLiff();
     }, 0);
