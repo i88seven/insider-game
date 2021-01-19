@@ -15,6 +15,7 @@
       </v-simple-table>
     </v-card-text>
     <v-btn @click="logout">ログアウト</v-btn>
+    <v-btn v-if="isHost" @click="requestReSend">現在の参加者を反映</v-btn>
     <v-card-actions v-if="isHost">
       <v-spacer />
       <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
@@ -31,6 +32,8 @@ import {
   initSocket,
   joinRoom,
   onJoinRoom,
+  reSendPlayers,
+  onReSendPlayers,
   onBloadcastPlayers,
   decideRoles,
   onDecideRoles,
@@ -78,12 +81,16 @@ export default Vue.extend({
         onDecideRoles(() => {
           this.$router.push('role-action');
         });
+        onReSendPlayers();
       }
       if (gameContentStore.isHost) {
         onReload();
         return;
       }
       onReloadResponse((route: string) => this.$router.push(route));
+    },
+    requestReSend(): void {
+      reSendPlayers();
     },
     async logout(): Promise<void> {
       await gameContentStore.logout();

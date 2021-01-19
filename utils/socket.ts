@@ -32,6 +32,21 @@ function onJoinRoom(): void {
   });
 }
 
+function reSendPlayers(): void {
+  const me = gameContentStore.me;
+  if (!me) {
+    return;
+  }
+  gameContentStore.setPlayers([me]);
+  socket.emit('re-send-players', gameContentStore.storedRoomId);
+}
+
+function onReSendPlayers(): void {
+  socket.on('re-send-players', () => {
+    joinRoom();
+  });
+}
+
 function onBloadcastPlayers(): void {
   socket.on('broadcast-players', (players: Player[]) => {
     gameContentStore.setPlayers(players);
@@ -251,6 +266,8 @@ export {
   initSocket,
   joinRoom,
   onJoinRoom,
+  reSendPlayers,
+  onReSendPlayers,
   onBloadcastPlayers,
   decideRoles,
   onDecideRoles,
