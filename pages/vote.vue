@@ -24,7 +24,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn :disabled="voted" color="primary" @click="vote">投票</v-btn>
+      <v-btn :disabled="!votedPlayerId || voted" color="primary" @click="vote">投票</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -106,6 +106,9 @@ export default Vue.extend({
   },
   methods: {
     vote(): void {
+      if (!this.votedPlayerId) {
+        return;
+      }
       vote(this.votedPlayerId);
       if (this.myRole === 'master') {
         gameContentStore.setVote({
