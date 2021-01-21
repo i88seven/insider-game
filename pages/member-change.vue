@@ -17,7 +17,19 @@
     <v-btn v-if="isHost" @click="requestReSend">現在の参加者を反映</v-btn>
     <v-card-actions v-if="isHost">
       <v-spacer />
-      <v-btn color="primary" @click="share">友達を呼ぶ</v-btn>
+      <v-menu top offset-y>
+        <template #activator="{ on, attrs }">
+          <v-btn color="primary" v-bind="attrs" v-on="on">友達を呼ぶ</v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title @click="share">LINE でシェア</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title @click="copyUrl">URL をコピー</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-btn :disabled="players.length < 3" color="primary" @click="start">始める</v-btn>
     </v-card-actions>
   </v-card>
@@ -42,6 +54,11 @@ export default Vue.extend({
   methods: {
     async share(): Promise<void> {
       await gameContentStore.share();
+    },
+    async copyUrl(): Promise<void> {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const self: any = this;
+      await self.$copyText(`${process.env.LIFF_URL}/main?roomId=${gameContentStore.roomId}`);
     },
     requestReSend(): void {
       reSendPlayers();
