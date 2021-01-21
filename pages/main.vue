@@ -27,7 +27,7 @@
             <v-list-item-title @click="share">LINE でシェア</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>URL をコピー</v-list-item-title>
+            <v-list-item-title @click="copyUrl">URL をコピー</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -109,6 +109,11 @@ export default Vue.extend({
     },
     async share(): Promise<void> {
       await gameContentStore.share();
+    },
+    async copyUrl(): Promise<void> {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const self: any = this;
+      await self.$copyText(`${process.env.LIFF_URL}/main?roomId=${gameContentStore.roomId}`);
     },
     start(): void {
       gameContentStore.randomSelectRoles();
