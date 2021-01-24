@@ -46,6 +46,7 @@ import {
   reSendPlayers,
   onReSendPlayers,
   onBloadcastPlayers,
+  onSendSettings,
   decideRoles,
   onDecideRoles,
   onReload,
@@ -93,6 +94,7 @@ export default Vue.extend({
           this.$router.push('role-action');
         });
         onReSendPlayers();
+        onSendSettings();
       }
       if (gameContentStore.isHost) {
         onReload();

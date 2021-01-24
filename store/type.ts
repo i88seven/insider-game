@@ -4,3 +4,7 @@ export interface Player {
 }
 
 export type Role = 'master' | 'insider' | 'citizen';
+
+export interface Settings {
+  limitMinute: number;
+}

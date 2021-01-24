@@ -1,10 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
 import liff from '@line/liff';
-import { Player, Role } from '~/store/type';
+import { Player, Role, Settings } from '~/store/type';
 import { DateTime } from 'luxon';
 import axios from 'axios';
-
-const DISCUSSION_TIME_MINUTES: number = 5;
 
 @Module({
   name: 'gameContent',
@@ -19,6 +17,9 @@ class GameContentModule extends VuexModule {
   votes: { [key: string]: string } = {};
   subject: string = '';
   loadedSubjects: string[] = [];
+  settings: Settings = {
+    limitMinute: 5,
+  };
   discussionTimeLimit: DateTime | null = null;
   searchTimeLimit: DateTime | null = null;
 
@@ -30,6 +31,11 @@ class GameContentModule extends VuexModule {
   @Mutation
   SET_MY_ID(myId: string): void {
     this.myId = myId;
+  }
+
+  @Mutation
+  SET_SETTINGS(settings: Settings): void {
+    this.settings = settings;
   }
 
   @Mutation
@@ -136,6 +142,11 @@ class GameContentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  setSettings(settings: Settings): void {
+    this.SET_SETTINGS(settings);
+  }
+
+  @Action({ rawError: true })
   addPlayer({ id, name }: { id: string; name: string }): void {
     if (
       this.players.find((player): boolean => {
@@ -214,7 +225,7 @@ class GameContentModule extends VuexModule {
 
   @Action({ rawError: true })
   generateDiscussionTimeLimit(): void {
-    this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }));
+    this.SET_DISCUSSION_TIME_LIMIT(DateTime.utc().plus({ minutes: this.settings.limitMinute }));
   }
 
   @Action({ rawError: true })
@@ -229,7 +240,7 @@ class GameContentModule extends VuexModule {
     }
     const diff = this.discussionTimeLimit.diff(DateTime.utc(), ['minutes', 'seconds']);
     this.SET_SEARCH_TIME_LIMIT(
-      DateTime.utc().plus({ minutes: DISCUSSION_TIME_MINUTES }).minus(diff)
+      DateTime.utc().plus({ minutes: this.settings.limitMinute }).minus(diff)
     );
   }
 
@@ -260,6 +271,10 @@ class GameContentModule extends VuexModule {
 
   get storedMyId(): string {
     return this.myId;
+  }
+
+  get storedSettings(): Settings {
+    return this.settings;
   }
 
   get storedPlayers(): Player[] {

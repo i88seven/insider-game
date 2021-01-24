@@ -11,7 +11,7 @@
       </v-container>
     </v-main>
     <v-footer :absolute="true" app>
-      <v-carousel v-show="open" v-model="selectedPage" height="220">
+      <v-carousel v-show="ruleShow" v-model="selectedPage" height="220">
         <v-carousel-item v-for="rulePage in rulePages" :key="rulePage">
           <v-row class="rule-item" align="center" justify="center">
             <div>
@@ -24,8 +24,24 @@
       </v-carousel>
       <div class="copyright-container">
         <span class="copyright">&copy; {{ new Date().getFullYear() }} i88seven</span>
-        <div>
-          <v-btn class="rule-btn" height="22" @click="openRule">ルール</v-btn>
+        <div class="footer-buttons">
+          <v-dialog v-if="isHost && !gameStarted" v-model="settingShow">
+            <template #activator="{ on, attrs }">
+              <v-btn height="22" v-bind="attrs" v-on="on">ゲーム設定</v-btn>
+            </template>
+            <v-card>
+              <v-card-title class="headline">ゲーム設定</v-card-title>
+              <v-card-text>
+                <v-text-field v-model.number="limitMinute" label="話し合い時間(分)" />
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="decideSettings">OK</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-btn height="22" @click="openRule">ルール説明</v-btn>
         </div>
       </div>
     </v-footer>
@@ -34,16 +50,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { reload } from '~/utils/socket';
+import { reload, sendSettings } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
 
 export default Vue.extend({
   name: 'Layout',
-  data(): { open: boolean; selectedPage: number } {
+  data(): { ruleShow: boolean; settingShow: boolean; selectedPage: number; limitMinute: number } {
     return {
-      open: false,
+      ruleShow: false,
+      settingShow: false,
       selectedPage: 0,
+      limitMinute: 5,
     };
   },
   computed: {
@@ -52,6 +70,9 @@ export default Vue.extend({
     },
     isHost(): boolean {
       return gameContentStore.isHost;
+    },
+    gameStarted(): boolean {
+      return !!gameContentStore.myRole;
     },
     rulePages(): ('rule' | Role)[] {
       return ['rule', 'master', 'insider', 'citizen'];
@@ -70,7 +91,16 @@ export default Vue.extend({
       reload();
     },
     openRule(): void {
-      this.open = !this.open;
+      this.ruleShow = !this.ruleShow;
+    },
+    decideSettings(): void {
+      if (this.isHost && !this.gameStarted) {
+        gameContentStore.setSettings({
+          limitMinute: this.limitMinute,
+        });
+        sendSettings();
+      }
+      this.settingShow = false;
     },
   },
 });
@@ -94,7 +124,7 @@ export default Vue.extend({
   white-space: break-spaces;
 }
 
-.rule-btn {
+.footer-buttons {
   float: right;
 }
 </style>

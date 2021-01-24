@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { gameContentStore } from '~/store';
-import { Player, Role } from '~/store/type';
+import { Player, Role, Settings } from '~/store/type';
 import { DateTime } from 'luxon';
 
 type GameRoutes = 'main' | 'role-action' | 'count-down' | 'vote' | 'game-result' | 'failure-result';
@@ -50,6 +50,16 @@ function onReSendPlayers(): void {
 function onBloadcastPlayers(): void {
   socket.on('broadcast-players', (players: Player[]) => {
     gameContentStore.setPlayers(players);
+  });
+}
+
+function sendSettings(): void {
+  socket.emit('send-settings', gameContentStore.storedRoomId, gameContentStore.storedSettings);
+}
+
+function onSendSettings(): void {
+  socket.on('send-settings', (settings: Settings) => {
+    gameContentStore.setSettings(settings);
   });
 }
 
@@ -269,6 +279,8 @@ export {
   reSendPlayers,
   onReSendPlayers,
   onBloadcastPlayers,
+  sendSettings,
+  onSendSettings,
   decideRoles,
   onDecideRoles,
   decideSubject,
