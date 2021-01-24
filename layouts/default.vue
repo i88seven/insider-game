@@ -2,7 +2,7 @@
   <v-app dark>
     <v-app-bar app>
       <div style="text-align: right">
-        <v-btn v-if="isRoomExist && !isHost" @click="reload">更新</v-btn>
+        <v-btn v-if="isRoomExist" @click="reload">更新</v-btn>
       </div>
     </v-app-bar>
     <v-main>
@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { reload, sendSettings } from '~/utils/socket';
+import { joinRoom, reload, sendSettings } from '~/utils/socket';
 import { gameContentStore } from '~/store';
 import { Role } from '~/store/type';
 
@@ -88,7 +88,11 @@ export default Vue.extend({
   },
   methods: {
     reload(): void {
-      reload();
+      if (this.isHost) {
+        joinRoom();
+      } else {
+        reload();
+      }
     },
     openRule(): void {
       this.ruleShow = !this.ruleShow;
